@@ -3,27 +3,35 @@ import { Link } from "react-router-dom";
 import { 
   collection, 
   getDocs, 
-  query, 
-  orderBy, 
-  addDoc, 
   deleteDoc, 
   doc, 
-  serverTimestamp 
+  query, 
+  orderBy,
+  addDoc,
+  serverTimestamp,
+  getDoc
 } from "firebase/firestore";
 import { db } from "../firebase";
 import { SEED_ARTICLES } from "../data/seedArticles";
 import { 
   FileText, 
+  PlusCircle, 
   CheckCircle2, 
   Clock, 
   Layers, 
-  PlusCircle, 
-  ArrowUpRight,
-  TrendingUp,
-  Edit,
+  ArrowUpRight, 
+  Edit, 
+  Trash2,
   DownloadCloud,
   Check,
-  Trash2
+  Home,
+  Info,
+  Sparkles,
+  PhoneCall,
+  Image as ImageIcon,
+  ExternalLink,
+  ShieldCheck,
+  Compass
 } from "lucide-react";
 
 export default function Dashboard() {
@@ -31,63 +39,87 @@ export default function Dashboard() {
     total: 0,
     published: 0,
     draft: 0,
-    categories: 6,
+    categories: 0,
   });
   const [recentArticles, setRecentArticles] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [deletingId, setDeletingId] = useState(null);
   const [importing, setImporting] = useState(false);
   const [importSuccess, setImportSuccess] = useState(false);
-  const [deletingId, setDeletingId] = useState(null);
-
-  const handleDelete = async (id, title) => {
-    if (!window.confirm(`Apakah Anda yakin ingin menghapus artikel "${title}"?`)) {
-      return;
-    }
-    try {
-      setDeletingId(id);
-      await deleteDoc(doc(db, "articles", id));
-      await loadDashboardData();
-    } catch (err) {
-      console.error("Gagal menghapus:", err);
-      alert("Gagal menghapus artikel: " + err.message);
-    } finally {
-      setDeletingId(null);
-    }
-  };
-
-
-  async function loadDashboardData() {
-    try {
-      setLoading(true);
-      const q = query(collection(db, "articles"), orderBy("createdAt", "desc"));
-      const snapshot = await getDocs(q);
-      const docs = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-
-      const publishedCount = docs.filter(a => a.status === "published").length;
-      const draftCount = docs.filter(a => a.status === "draft").length;
-
-      setStats({
-        total: docs.length,
-        published: publishedCount,
-        draft: draftCount,
-        categories: 6
-      });
-
-      setRecentArticles(docs.slice(0, 5));
-    } catch (err) {
-      console.error("Error loading dashboard data:", err);
-    } finally {
-      setLoading(false);
-    }
-  }
+  const [aboutConfigStatus, setAboutConfigStatus] = useState("Memeriksa...");
 
   useEffect(() => {
     loadDashboardData();
   }, []);
 
-  // One-click seed function
+  async function loadDashboardData() {
+    try {
+      setLoading(true);
+      // Load articles (filter out system page configs)
+      const q = query(collection(db, "articles"), orderBy("createdAt", "desc"));
+      const snapshot = await getDocs(q);
+      const docs = snapshot.docs
+        .filter((d) => !d.id.startsWith("__page_"))
+        .map((d) => ({ id: d.id, ...d.data() }));
+
+      const publishedCount = docs.filter((a) => a.status === "published").length;
+      const draftCount = docs.filter((a) => a.status === "draft").length;
+
+      // Unique categories count
+      const categoriesSet = new Set(
+        docs.map((a) => a.category).filter(Boolean)
+      );
+
+      setStats({
+        total: docs.length,
+        published: publishedCount,
+        draft: draftCount,
+        categories: categoriesSet.size || 6,
+      });
+
+      setRecentArticles(docs.slice(0, 5));
+
+      // Cek apakah Tentang Kami sudah ada konfigurasi kustom di Firestore
+      try {
+        const aboutSnap = await getDoc(doc(db, "articles", "__page_about"));
+        if (aboutSnap.exists()) {
+          setAboutConfigStatus("Tersinkronisasi Kustom");
+        } else {
+          setAboutConfigStatus("Menggunakan Data Bawaan");
+        }
+      } catch {
+        setAboutConfigStatus("Data Bawaan Aktif");
+      }
+    } catch (err) {
+      console.error("Gagal memuat dashboard:", err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const handleDelete = async (id, title) => {
+    if (!window.confirm(`Yakin ingin menghapus artikel: "${title}"?`)) {
+      return;
+    }
+
+    try {
+      setDeletingId(id);
+      await deleteDoc(doc(db, "articles", id));
+      await loadDashboardData();
+    } catch (err) {
+      console.error("Gagal menghapus artikel:", err);
+      alert("Gagal menghapus artikel. Silakan coba lagi.");
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
   const handleSeedArticles = async () => {
-    if (!window.confirm("Apakah Anda ingin memasukkan 6 artikel panduan finansial & EWA awal ke database Firestore?")) {
+    if (
+      !window.confirm(
+        "Apakah Anda ingin memasukkan 6 artikel panduan finansial contoh ke database Firebase?"
+      )
+    ) {
       return;
     }
 
@@ -98,15 +130,15 @@ export default function Dashboard() {
         await addDoc(colRef, {
           ...item,
           createdAt: serverTimestamp(),
-          updatedAt: serverTimestamp()
+          updatedAt: serverTimestamp(),
         });
       }
       setImportSuccess(true);
       setTimeout(() => setImportSuccess(false), 4000);
       await loadDashboardData();
     } catch (err) {
-      console.error("Gagal import:", err);
-      alert("Gagal import artikel: " + err.message);
+      console.error("Gagal mengimpor artikel contoh:", err);
+      alert("Gagal mengimpor artikel contoh: " + err.message);
     } finally {
       setImporting(false);
     }
@@ -114,37 +146,30 @@ export default function Dashboard() {
 
   return (
     <div className="cms-page-container">
-      {/* Welcome Banner */}
-      <div className="dashboard-welcome-banner">
-        <div className="welcome-text-col">
-          <div className="welcome-badge">
-            <TrendingUp size={14} />
-            <span>Dashboard Edukasi &amp; Berita Ayo Kasbon</span>
+      {/* Top Banner & Header */}
+      <div className="cms-page-header">
+        <div>
+          <div className="d-flex align-center gap-2 mb-1">
+            <span className="badge-stage-pill amber">CMS PENGELOLA WEB TERPADU</span>
+            <span className="text-muted text-sm">• Ayo Kasbon Company Profile</span>
           </div>
-          <h1 className="welcome-title">Kelola Publikasi Artikel Secara Mandiri</h1>
-          <p className="welcome-desc">
-            Buat artikel inspiratif untuk seluruh generasi karyawan (Gen Z, Milenial, Gen X) dan manajemen HR dengan kemudahan terhubung ke Firebase Firestore.
+          <h1 className="cms-page-title">Dashboard Utama Website</h1>
+          <p className="cms-page-subtitle">
+            Ringkasan terpadu dan akses cepat ke seluruh halaman website: Beranda, Tentang Kami, dan Berita & Artikel.
           </p>
         </div>
-        <div className="welcome-action-col d-flex gap-2">
-          {stats.total === 0 && (
-            <button 
-              onClick={handleSeedArticles}
-              disabled={importing}
-              className="btn-secondary-action"
-              title="Masukkan 6 artikel bawaan ke Firebase"
-            >
-              {importing ? (
-                <div className="cms-spinner-sm" />
-              ) : importSuccess ? (
-                <Check size={18} className="text-success" />
-              ) : (
-                <DownloadCloud size={18} />
-              )}
-              <span>{importing ? "Mengimpor..." : importSuccess ? "Berhasil Diimpor!" : "Sinkronkan 6 Artikel Awal"}</span>
-            </button>
-          )}
 
+        <div className="cms-header-actions">
+          <a
+            href="http://localhost:5173"
+            target="_blank"
+            rel="noreferrer"
+            className="btn-secondary-action"
+            title="Lihat website utama"
+          >
+            <ExternalLink size={16} />
+            <span>Kunjungi Web Live</span>
+          </a>
           <Link to="/articles/new" className="btn-primary-action">
             <PlusCircle size={18} />
             <span>Tulis Artikel Baru</span>
@@ -152,55 +177,172 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Stat Metric Cards */}
-      <div className="stats-metric-grid">
-        <div className="stat-card">
-          <div className="stat-icon-box bg-blue-light">
-            <FileText size={24} className="text-blue" />
+      {/* ========================================================================= */}
+      {/* 1. UNIVERSAL PAGES OVERVIEW CARDS (Home, About, Articles)                */}
+      {/* ========================================================================= */}
+      <div className="dashboard-pages-grid mb-4">
+        {/* Page Card 1: Home */}
+        <div className="page-module-card">
+          <div className="module-card-header">
+            <div className="module-icon-box bg-blue-subtle">
+              <Home size={22} className="text-blue" />
+            </div>
+            <span className="badge-module-status gray">Tahap 3</span>
           </div>
-          <div className="stat-info">
-            <span className="stat-label">Total Artikel</span>
-            <span className="stat-value">{stats.total}</span>
+          <h3 className="module-title">Halaman Beranda</h3>
+          <p className="module-desc">
+            Pengaturan banner hero, kartu fitur layanan kasbon, dan testimoni mitra perusahaan.
+          </p>
+          <div className="module-stats-list">
+            <div className="module-stat-row">
+              <span className="stat-bullet blue"></span>
+              <span>1 Hero & Banner Utama</span>
+            </div>
+            <div className="module-stat-row">
+              <span className="stat-bullet blue"></span>
+              <span>Kartu Keunggulan & Layanan</span>
+            </div>
+            <div className="module-stat-row">
+              <span className="stat-bullet blue"></span>
+              <span>Testimoni Pengguna & Mitra</span>
+            </div>
+          </div>
+          <div className="module-card-footer">
+            <Link to="/home" className="btn-module-action">
+              <span>Kelola Beranda</span>
+              <ArrowUpRight size={15} />
+            </Link>
           </div>
         </div>
 
-        <div className="stat-card">
-          <div className="stat-icon-box bg-emerald-light">
-            <CheckCircle2 size={24} className="text-emerald" />
+        {/* Page Card 2: About (Tahap 2) */}
+        <div className="page-module-card highlight-card">
+          <div className="module-card-header">
+            <div className="module-icon-box bg-amber-subtle">
+              <Info size={22} className="text-amber" />
+            </div>
+            <span className="badge-module-status active-green">Tahap 2 Aktif</span>
           </div>
-          <div className="stat-info">
-            <span className="stat-label">Artikel Tayang</span>
-            <span className="stat-value">{stats.published}</span>
+          <h3 className="module-title">Halaman Tentang Kami</h3>
+          <p className="module-desc">
+            Kelola foto tim dokumentasi, teks sejarah pendiri, kartu keunggulan, dan banner CS.
+          </p>
+          <div className="module-stats-list">
+            <div className="module-stat-row">
+              <span className="stat-bullet amber"></span>
+              <span>Sejarah & Foto Dokumentasi Tim</span>
+            </div>
+            <div className="module-stat-row">
+              <span className="stat-bullet amber"></span>
+              <span>3 Kartu Kenapa Ayo Kasbon</span>
+            </div>
+            <div className="module-stat-row">
+              <span className="stat-bullet amber"></span>
+              <span>Status: <strong>{aboutConfigStatus}</strong></span>
+            </div>
+          </div>
+          <div className="module-card-footer">
+            <Link to="/about" className="btn-module-action primary">
+              <span>Kelola Tentang Kami</span>
+              <ArrowUpRight size={15} />
+            </Link>
           </div>
         </div>
 
-        <div className="stat-card">
-          <div className="stat-icon-box bg-amber-light">
-            <Clock size={24} className="text-amber" />
+        {/* Page Card 3: Articles */}
+        <div className="page-module-card">
+          <div className="module-card-header">
+            <div className="module-icon-box bg-emerald-subtle">
+              <FileText size={22} className="text-emerald" />
+            </div>
+            <span className="badge-module-status success">Aktif di Web</span>
           </div>
-          <div className="stat-info">
-            <span className="stat-label">Draf Belum Tayang</span>
-            <span className="stat-value">{stats.draft}</span>
+          <h3 className="module-title">Berita & Edukasi</h3>
+          <p className="module-desc">
+            Manajemen artikel finansial, panduan EWA kasbon, tips HR, dan penautan backlink otomatis.
+          </p>
+          <div className="module-stats-list">
+            <div className="module-stat-row">
+              <span className="stat-bullet green"></span>
+              <span>{stats.total} Total Artikel Terdaftar</span>
+            </div>
+            <div className="module-stat-row">
+              <span className="stat-bullet green"></span>
+              <span>{stats.published} Artikel Sedang Tayang</span>
+            </div>
+            <div className="module-stat-row">
+              <span className="stat-bullet green"></span>
+              <span>{stats.categories} Kategori Topik</span>
+            </div>
           </div>
-        </div>
-
-        <div className="stat-card">
-          <div className="stat-icon-box bg-indigo-light">
-            <Layers size={24} className="text-indigo" />
-          </div>
-          <div className="stat-info">
-            <span className="stat-label">Kategori Topik</span>
-            <span className="stat-value">{stats.categories}</span>
+          <div className="module-card-footer">
+            <Link to="/articles" className="btn-module-action">
+              <span>Kelola Semua Artikel</span>
+              <ArrowUpRight size={15} />
+            </Link>
           </div>
         </div>
       </div>
 
-      {/* Recent Articles Table Section */}
+      {/* ========================================================================= */}
+      {/* 2. PUSAT AKSI CEPAT (QUICK ACCESS SHORTCUTS)                             */}
+      {/* ========================================================================= */}
+      <div className="dashboard-quick-actions mb-4">
+        <div className="quick-actions-header">
+          <h3 className="section-title">Pusat Aksi Cepat</h3>
+          <p className="section-subtitle">Akses langsung ke menu yang paling sering diedit</p>
+        </div>
+        <div className="quick-actions-grid">
+          <Link to="/about/history" className="quick-action-btn">
+            <div className="qa-icon-wrap amber">
+              <ImageIcon size={20} />
+            </div>
+            <div className="qa-texts">
+              <span className="qa-title">Ganti Foto Tim & Sejarah</span>
+              <span className="qa-sub">Update foto kantor dan teks pendiri</span>
+            </div>
+          </Link>
+
+          <Link to="/about/why" className="quick-action-btn">
+            <div className="qa-icon-wrap blue">
+              <Layers size={20} />
+            </div>
+            <div className="qa-texts">
+              <span className="qa-title">Edit Kartu Kenapa Kasbon</span>
+              <span className="qa-sub">3 pilar keunggulan layanan kasbon</span>
+            </div>
+          </Link>
+
+          <Link to="/about/consultation" className="quick-action-btn">
+            <div className="qa-icon-wrap purple">
+              <PhoneCall size={20} />
+            </div>
+            <div className="qa-texts">
+              <span className="qa-title">Edit Banner Konsultasi CS</span>
+              <span className="qa-sub">Atur penawaran dan nomor kontak</span>
+            </div>
+          </Link>
+
+          <Link to="/articles/new" className="quick-action-btn">
+            <div className="qa-icon-wrap green">
+              <PlusCircle size={20} />
+            </div>
+            <div className="qa-texts">
+              <span className="qa-title">Tulis Artikel Baru</span>
+              <span className="qa-sub">Publikasikan edukasi finansial</span>
+            </div>
+          </Link>
+        </div>
+      </div>
+
+      {/* ========================================================================= */}
+      {/* 3. MONITORING ARTIKEL TERBARU                                            */}
+      {/* ========================================================================= */}
       <div className="dashboard-section-card">
         <div className="section-card-header">
           <div>
-            <h3 className="section-title">Artikel Terbaru</h3>
-            <p className="section-subtitle">Daftar artikel yang baru saja ditambahkan atau diperbarui</p>
+            <h3 className="section-title">Daftar Artikel Terkini</h3>
+            <p className="section-subtitle">Pantau dan kelola artikel yang baru saja dibuat atau diperbarui</p>
           </div>
           <div className="d-flex align-center gap-2">
             {stats.total > 0 && (
@@ -215,7 +357,7 @@ export default function Dashboard() {
               </button>
             )}
             <Link to="/articles" className="btn-view-all">
-              <span>Lihat Semua Artikel</span>
+              <span>Lihat Semua Artikel ({stats.total})</span>
               <ArrowUpRight size={16} />
             </Link>
           </div>

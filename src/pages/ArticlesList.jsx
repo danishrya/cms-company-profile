@@ -44,7 +44,7 @@ export default function ArticlesList() {
       setLoading(true);
       const q = query(collection(db, "articles"), orderBy("createdAt", "desc"));
       const snapshot = await getDocs(q);
-      const docs = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+      const docs = snapshot.docs.filter(d => !d.id.startsWith("__page_")).map(d => ({ id: d.id, ...d.data() }));
       setArticles(docs);
     } catch (err) {
       console.error("Error fetching articles:", err);
