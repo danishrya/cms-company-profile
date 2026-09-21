@@ -1,16 +1,24 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import logo from "../assets/logo.svg";
 import { 
   LayoutDashboard, 
+  Home,
+  Info,
   FileText, 
   PlusCircle, 
   LogOut, 
   ExternalLink,
   Menu,
   X,
-  UserCheck
+  UserCheck,
+  ChevronDown,
+  Layers,
+  Sparkles,
+  PhoneCall,
+  Image as ImageIcon,
+  MessageSquareQuote
 } from "lucide-react";
 
 export default function Layout({ children }) {
@@ -18,6 +26,31 @@ export default function Layout({ children }) {
   const location = useLocation();
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // State untuk kontrol accordion buka/tutup
+  const [openMenus, setOpenMenus] = useState({
+    home: false,
+    about: false,
+    articles: true, // default buka karena artikel sudah aktif
+  });
+
+  // Otomatis buka accordion sesuai URL saat ini
+  useEffect(() => {
+    if (location.pathname.startsWith("/articles")) {
+      setOpenMenus((prev) => ({ ...prev, articles: true }));
+    } else if (location.pathname.startsWith("/about")) {
+      setOpenMenus((prev) => ({ ...prev, about: true }));
+    } else if (location.pathname.startsWith("/home")) {
+      setOpenMenus((prev) => ({ ...prev, home: true }));
+    }
+  }, [location.pathname]);
+
+  const toggleMenu = (menuKey) => {
+    setOpenMenus((prev) => ({
+      ...prev,
+      [menuKey]: !prev[menuKey],
+    }));
+  };
 
   const handleLogout = async () => {
     try {
@@ -28,15 +61,72 @@ export default function Layout({ children }) {
     }
   };
 
-  const navItems = [
-    { label: "Dashboard", path: "/", icon: LayoutDashboard },
-    { label: "Kelola Artikel", path: "/articles", icon: FileText },
-    { label: "Tulis Artikel Baru", path: "/articles/new", icon: PlusCircle },
+  // Konfigurasi Navigasi Modular (Main Menu & Submenu)
+  const menuGroups = [
+    {
+      id: "home",
+      title: "Beranda (Home)",
+      icon: Home,
+      badge: "Tahap 3",
+      badgeClass: "badge-gray",
+      rootPath: "/home",
+      submenus: [
+        { label: "Hero & Banner", path: "/home/hero", icon: Sparkles },
+        { label: "Card Layanan & Fitur", path: "/home/features", icon: Layers },
+        { label: "Testimoni & Mitra", path: "/home/testimonials", icon: MessageSquareQuote },
+      ],
+    },
+    {
+      id: "about",
+      title: "Tentang Kami (About)",
+      icon: Info,
+      badge: "Tahap 2",
+      badgeClass: "badge-amber",
+      rootPath: "/about",
+      submenus: [
+        { label: "Sejarah & Foto Tim", path: "/about/history", icon: ImageIcon },
+        { label: "Kenapa Ayo Kasbon (Cards)", path: "/about/why", icon: Layers },
+        { label: "Banner Konsultasi CS", path: "/about/consultation", icon: PhoneCall },
+      ],
+    },
+    {
+      id: "articles",
+      title: "Berita & Artikel",
+      icon: FileText,
+      badge: "Aktif",
+      badgeClass: "badge-success",
+      rootPath: "/articles",
+      submenus: [
+        { label: "Daftar Semua Artikel", path: "/articles", icon: FileText },
+        { label: "Tulis Artikel Baru", path: "/articles/new", icon: PlusCircle },
+      ],
+    },
   ];
+
+  // Penentuan Judul Topbar & Link Web Live yang Relevan
+  let topbarTitle = "Panel Pengelola CMS Ayo Kasbon";
+  let livePreviewUrl = "http://localhost:5173/";
+  let livePreviewText = "Lihat Beranda";
+
+  if (location.pathname.startsWith("/articles")) {
+    topbarTitle = "Pengelola Berita & Artikel";
+    livePreviewUrl = "http://localhost:5173/berita-artikel";
+    livePreviewText = "Lihat Berita Live";
+  } else if (location.pathname.startsWith("/about")) {
+    topbarTitle = "Pengelola Halaman Tentang Kami";
+    livePreviewUrl = "http://localhost:5173/tentang-kami";
+    livePreviewText = "Lihat Tentang Kami";
+  } else if (location.pathname.startsWith("/home")) {
+    topbarTitle = "Pengelola Halaman Beranda";
+    livePreviewUrl = "http://localhost:5173/";
+    livePreviewText = "Lihat Beranda Live";
+  } else if (location.pathname === "/") {
+    topbarTitle = "Dashboard Ringkasan CMS";
+  }
 
   return (
     <div className="cms-app-wrapper">
-      {/* Sidebar Desktop */}
+      {/* Sidebar Desktop & Mobile */}
       <aside className={`cms-sidebar ${mobileMenuOpen ? "open" : ""}`}>
         <div className="sidebar-brand">
           <img src={logo} alt="Ayo Kasbon" className="sidebar-logo" />
@@ -44,24 +134,81 @@ export default function Layout({ children }) {
         </div>
 
         <nav className="sidebar-nav">
-          <div className="nav-group-title">MENU UTAMA</div>
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = location.pathname === item.path;
+          <div className="nav-group-title">NAVIGASI UTAMA</div>
+          
+          {/* Dashboard Item Tunggal */}
+          <Link
+            to="/"
+            className={`nav-item ${location.pathname === "/" ? "active" : ""}`}
+            onClick={() => setMobileMenuOpen(false)}
+          >
+            <LayoutDashboard size={18} className="nav-item-icon" />
+            <span>Dashboard</span>
+          </Link>
+
+          <div className="nav-group-title mt-3">KONTEN WEBSITE (PAGES)</div>
+
+          {/* List Accordion Menu Groups */}
+          {menuGroups.map((group) => {
+            const GroupIcon = group.icon;
+            const isOpen = openMenus[group.id];
+            const isGroupActive = location.pathname.startsWith(group.rootPath);
+
             return (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={`nav-item ${isActive ? "active" : ""}`}
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                <Icon size={19} className="nav-item-icon" />
-                <span>{item.label}</span>
-              </Link>
+              <div key={group.id} className="nav-group-accordion">
+                <button
+                  type="button"
+                  onClick={() => toggleMenu(group.id)}
+                  className={`nav-accordion-header ${isGroupActive ? "parent-active" : ""}`}
+                  aria-expanded={isOpen}
+                >
+                  <div className="nav-header-left">
+                    <GroupIcon size={18} className="nav-item-icon" />
+                    <span className="nav-header-title">{group.title}</span>
+                  </div>
+
+                  <div className="nav-header-right">
+                    {group.badge && (
+                      <span className={`nav-badge-status ${group.badgeClass}`}>
+                        {group.badge}
+                      </span>
+                    )}
+                    <ChevronDown
+                      size={15}
+                      className={`nav-chevron-icon ${isOpen ? "expanded" : ""}`}
+                    />
+                  </div>
+                </button>
+
+                {/* Submenu Dropdown */}
+                {isOpen && (
+                  <div className="nav-submenu-list">
+                    {group.submenus.map((sub) => {
+                      const SubIcon = sub.icon;
+                      const isSubActive = 
+                        location.pathname === sub.path ||
+                        (sub.path === "/articles" && location.pathname.startsWith("/articles/edit/"));
+
+                      return (
+                        <Link
+                          key={sub.path}
+                          to={sub.path}
+                          className={`nav-submenu-link ${isSubActive ? "active" : ""}`}
+                          onClick={() => setMobileMenuOpen(false)}
+                        >
+                          <span className="nav-submenu-bullet" />
+                          <span className="nav-submenu-text">{sub.label}</span>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
             );
           })}
         </nav>
 
+        {/* Sidebar Footer User Info */}
         <div className="sidebar-footer">
           <div className="admin-user-card">
             <div className="admin-user-avatar">
@@ -104,18 +251,18 @@ export default function Layout({ children }) {
           </button>
 
           <div className="topbar-title-box">
-            <h2 className="topbar-title">Panel Pengelola Artikel Ayo Kasbon</h2>
+            <h2 className="topbar-title">{topbarTitle}</h2>
           </div>
 
           <div className="topbar-actions">
             <a 
-              href="http://localhost:5173/berita-artikel" 
+              href={livePreviewUrl} 
               target="_blank" 
               rel="noreferrer" 
               className="btn-preview-live"
             >
               <ExternalLink size={15} />
-              <span>Lihat Web Live</span>
+              <span>{livePreviewText}</span>
             </a>
           </div>
         </header>

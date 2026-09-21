@@ -7,6 +7,8 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import ArticlesList from "./pages/ArticlesList";
 import ArticleEditor from "./pages/ArticleEditor";
+import AboutManager from "./pages/AboutManager";
+import HomeManager from "./pages/HomeManager";
 import "./App.css";
 
 export default function App() {
@@ -28,6 +30,7 @@ export default function App() {
           }
         />
 
+        {/* 1. Berita & Artikel Routes */}
         <Route
           path="/articles"
           element={
@@ -56,6 +59,52 @@ export default function App() {
             <ProtectedRoute>
               <Layout>
                 <ArticleEditor />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+
+        {/* 2. Tentang Kami (About) Routes - Tahap 2 */}
+        <Route
+          path="/about"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <AboutManager />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/about/:section"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <AboutManager />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+
+        {/* 3. Beranda (Home) Routes - Tahap 3 */}
+        <Route
+          path="/home"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <HomeManager />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/home/:section"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <HomeManager />
               </Layout>
             </ProtectedRoute>
           }

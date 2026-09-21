@@ -34,8 +34,8 @@ export const SEED_ARTICLES = [
   {
     title: "Gaji Pertama Cepat Habis? Panduan Cashflow Anti-Boncos & Bebas FOMO untuk Gen Z",
     slug: "gaji-pertama-cepat-habis-panduan-cashflow-genz",
-    category: "Finansial Gen Z",
-    categoryId: "genz",
+    category: "Tips & Literasi Finansial",
+    categoryId: "finansial",
     badgeColor: "emerald",
     date: "16 Sep 2026",
     excerpt: "Cara cerdas mengatur gaji pertama, membedakan self-reward dengan impulsive buying, dan menjaga tabungan tetap tumbuh tanpa terseret gaya hidup konsumtif.",
@@ -64,8 +64,8 @@ export const SEED_ARTICLES = [
   {
     title: "Strategi Generasi Sandwich: Menyeimbangkan Kebutuhan Anak & Orang Tua Tanpa Jebol",
     slug: "strategi-generasi-sandwich-finansial-keluarga",
-    category: "Karyawan Milenial",
-    categoryId: "milenial",
+    category: "Keuangan Keluarga",
+    categoryId: "keluarga",
     badgeColor: "purple",
     date: "14 Sep 2026",
     excerpt: "Tips praktis mengelola arus kas bagi karyawan yang menanggung dua generasi sekaligus, menjaga kesehatan mental keluarga, dan memutus rantai sandwich generation.",
@@ -94,9 +94,9 @@ export const SEED_ARTICLES = [
   {
     title: "Menjelang Pensiun Tenang: Checklist Finansial & Investasi Rendah Risiko Karyawan Senior",
     slug: "menjelang-pensiun-tenang-checklist-finansial-genx",
-    category: "Perencanaan Gen X",
-    categoryId: "genx",
-    badgeColor: "blue",
+    category: "Bahaya Pinjol & Paylater",
+    categoryId: "pinjol",
+    badgeColor: "red",
     date: "11 Sep 2026",
     excerpt: "Panduan transisi keuangan 5-10 tahun sebelum masa pensiun: restrukturisasi utang, asuransi kesehatan, dan penataan portofolio aset yang aman.",
     image: "https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=800&auto=format&fit=crop&q=80",
@@ -152,7 +152,7 @@ export const SEED_ARTICLES = [
   {
     title: "Keamanan Data & Regulasi: Standar Perlindungan Privasi Finansial di Era Digital",
     slug: "keamanan-data-dan-regulasi-finansial-digital",
-    category: "Regulasi & Keamanan",
+    category: "Regulasi & Keamanan Data",
     categoryId: "keamanan",
     badgeColor: "red",
     date: "05 Sep 2026",

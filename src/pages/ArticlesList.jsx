@@ -22,12 +22,12 @@ import {
 
 export const CATEGORY_OPTIONS = [
   "Semua Kategori",
-  "Finansial Gen Z",
-  "Karyawan Milenial",
-  "Perencanaan Gen X",
   "Solusi EWA & Kasbon",
+  "Bahaya Pinjol & Paylater",
+  "Tips & Literasi Finansial",
+  "Keuangan Keluarga",
   "Kesejahteraan HR",
-  "Regulasi & Keamanan",
+  "Regulasi & Keamanan Data",
 ];
 
 export default function ArticlesList() {

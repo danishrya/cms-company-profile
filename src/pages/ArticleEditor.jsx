@@ -19,16 +19,17 @@ import {
   Plus, 
   Trash2, 
   CheckCircle,
-  AlertCircle
+  AlertCircle,
+  ExternalLink
 } from "lucide-react";
 
 const CATEGORIES = [
-  { id: "genz", name: "Finansial Gen Z", color: "emerald" },
-  { id: "milenial", name: "Karyawan Milenial", color: "purple" },
-  { id: "genx", name: "Perencanaan Gen X", color: "blue" },
   { id: "ewa", name: "Solusi EWA & Kasbon", color: "teal" },
+  { id: "pinjol", name: "Bahaya Pinjol & Paylater", color: "red" },
+  { id: "finansial", name: "Tips & Literasi Finansial", color: "emerald" },
+  { id: "keluarga", name: "Keuangan Keluarga", color: "purple" },
   { id: "hr", name: "Kesejahteraan HR", color: "orange" },
-  { id: "keamanan", name: "Regulasi & Keamanan", color: "red" },
+  { id: "keamanan", name: "Regulasi & Keamanan Data", color: "blue" },
 ];
 
 export default function ArticleEditor() {
@@ -59,6 +60,8 @@ export default function ArticleEditor() {
     takeaways: ["", ""],
     bodyParagraphs: ["", ""],
     quote: "",
+    sourceName: "",
+    sourceUrl: "",
   });
 
   // Load article if editing
@@ -87,6 +90,8 @@ export default function ArticleEditor() {
             takeaways: d.content?.takeaways || d.takeaways || [""],
             bodyParagraphs: d.content?.body || d.bodyParagraphs || [""],
             quote: d.content?.quote || d.quote || "",
+            sourceName: d.sourceName || d.source?.name || "",
+            sourceUrl: d.sourceUrl || d.source?.url || "",
           });
         } else {
           alert("Artikel tidak ditemukan!");
@@ -288,6 +293,12 @@ export default function ArticleEditor() {
           body: formData.bodyParagraphs.filter(b => b.trim() !== ""),
           quote: formData.quote,
         },
+        sourceName: (formData.sourceName || "").trim(),
+        sourceUrl: (formData.sourceUrl || "").trim(),
+        source: {
+          name: (formData.sourceName || "").trim(),
+          url: (formData.sourceUrl || "").trim(),
+        },
         updatedAt: serverTimestamp(),
       };
 
@@ -398,7 +409,7 @@ export default function ArticleEditor() {
             </div>
 
             <div className="form-group">
-              <label className="form-label">Slug URL</label>
+              <label className="form-label">Slug URL (Alamat Internal Web Ayo Kasbon)</label>
               <input
                 type="text"
                 placeholder="mengenal-aplikasi-ewa-cara-kerja"
@@ -406,7 +417,45 @@ export default function ArticleEditor() {
                 onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
                 className="form-input text-muted"
               />
-              <span className="form-hint">URL artikel nantinya: /berita-artikel#{formData.slug || "slug-artikel"}</span>
+              <span className="form-hint">URL artikel di web kamu nantinya: /berita-artikel/{formData.slug || "slug-artikel"}</span>
+            </div>
+
+            {/* Sumber Asli / Backlink Referensi */}
+            <div className="form-group" style={{ background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: "10px", padding: "14px 16px" }}>
+              <div className="d-flex align-center justify-between mb-1">
+                <label className="form-label mb-0" style={{ fontWeight: 600, color: "#1e293b", display: "flex", alignItems: "center", gap: "6px" }}>
+                  <ExternalLink size={16} color="#2399ff" />
+                  <span>Sumber Asli / Referensi Berita (Opsional)</span>
+                </label>
+                <span style={{ fontSize: "11px", padding: "2px 8px", background: "#e0f2fe", color: "#0284c7", borderRadius: "12px", fontWeight: 600 }}>
+                  Backlink Rujukan
+                </span>
+              </div>
+              <p className="form-hint" style={{ marginTop: "4px", marginBottom: "12px" }}>
+                Isi kolom ini jika artikel Anda mengutip atau merujuk dari media luar (misal: Tech in Asia, Kompas, Katadata). Tautan akan tampil rapi di detail artikel website company profile.
+              </p>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: "12px" }}>
+                <div>
+                  <label className="form-label" style={{ fontSize: "12px", color: "#475569", marginBottom: "4px" }}>Nama Media / Penerbit</label>
+                  <input
+                    type="text"
+                    placeholder="Contoh: Tech in Asia"
+                    value={formData.sourceName}
+                    onChange={(e) => setFormData({ ...formData, sourceName: e.target.value })}
+                    className="form-input"
+                  />
+                </div>
+                <div>
+                  <label className="form-label" style={{ fontSize: "12px", color: "#475569", marginBottom: "4px" }}>URL Link Asli (Diawali https://)</label>
+                  <input
+                    type="url"
+                    placeholder="https://id.techinasia.com/judul-artikel-asli"
+                    value={formData.sourceUrl}
+                    onChange={(e) => setFormData({ ...formData, sourceUrl: e.target.value })}
+                    className="form-input"
+                  />
+                </div>
+              </div>
             </div>
 
             <div className="form-group">
