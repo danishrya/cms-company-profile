@@ -47,6 +47,7 @@ export default function Dashboard() {
   const [importing, setImporting] = useState(false);
   const [importSuccess, setImportSuccess] = useState(false);
   const [aboutConfigStatus, setAboutConfigStatus] = useState("Memeriksa...");
+  const [homeConfigStatus, setHomeConfigStatus] = useState("Memeriksa...");
 
   useEffect(() => {
     loadDashboardData();
@@ -89,6 +90,18 @@ export default function Dashboard() {
         }
       } catch {
         setAboutConfigStatus("Data Bawaan Aktif");
+      }
+
+      // Cek apakah Beranda sudah ada konfigurasi kustom di Firestore
+      try {
+        const homeSnap = await getDoc(doc(db, "articles", "__page_home"));
+        if (homeSnap.exists()) {
+          setHomeConfigStatus("Tersinkronisasi Kustom");
+        } else {
+          setHomeConfigStatus("Menggunakan Data Bawaan");
+        }
+      } catch {
+        setHomeConfigStatus("Data Bawaan Aktif");
       }
     } catch (err) {
       console.error("Gagal memuat dashboard:", err);
@@ -182,12 +195,12 @@ export default function Dashboard() {
       {/* ========================================================================= */}
       <div className="dashboard-pages-grid mb-4">
         {/* Page Card 1: Home */}
-        <div className="page-module-card">
+        <div className="page-module-card highlight-card">
           <div className="module-card-header">
             <div className="module-icon-box bg-blue-subtle">
               <Home size={22} className="text-blue" />
             </div>
-            <span className="badge-module-status gray">Tahap 3</span>
+            <span className="badge-module-status active-green">Tahap 3 Aktif</span>
           </div>
           <h3 className="module-title">Halaman Beranda</h3>
           <p className="module-desc">
@@ -204,11 +217,11 @@ export default function Dashboard() {
             </div>
             <div className="module-stat-row">
               <span className="stat-bullet blue"></span>
-              <span>Testimoni Pengguna & Mitra</span>
+              <span>Status: <strong>{homeConfigStatus}</strong></span>
             </div>
           </div>
           <div className="module-card-footer">
-            <Link to="/home" className="btn-module-action">
+            <Link to="/home" className="btn-module-action primary">
               <span>Kelola Beranda</span>
               <ArrowUpRight size={15} />
             </Link>
