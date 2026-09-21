@@ -162,10 +162,6 @@ export default function Dashboard() {
       {/* Top Banner & Header */}
       <div className="cms-page-header">
         <div>
-          <div className="d-flex align-center gap-2 mb-1">
-            <span className="badge-stage-pill amber">CMS PENGELOLA WEB TERPADU</span>
-            <span className="text-muted text-sm">• Ayo Kasbon Company Profile</span>
-          </div>
           <h1 className="cms-page-title">Dashboard Utama Website</h1>
           <p className="cms-page-subtitle">
             Ringkasan terpadu dan akses cepat ke seluruh halaman website: Beranda, Tentang Kami, dan Berita & Artikel.
@@ -200,7 +196,7 @@ export default function Dashboard() {
             <div className="module-icon-box bg-blue-subtle">
               <Home size={22} className="text-blue" />
             </div>
-            <span className="badge-module-status active-green">Tahap 3 Aktif</span>
+            <span className="badge-module-status active-green">Aktif di Web</span>
           </div>
           <h3 className="module-title">Halaman Beranda</h3>
           <p className="module-desc">
@@ -234,7 +230,7 @@ export default function Dashboard() {
             <div className="module-icon-box bg-amber-subtle">
               <Info size={22} className="text-amber" />
             </div>
-            <span className="badge-module-status active-green">Tahap 2 Aktif</span>
+            <span className="badge-module-status active-green">Aktif di Web</span>
           </div>
           <h3 className="module-title">Halaman Tentang Kami</h3>
           <p className="module-desc">
@@ -297,56 +293,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* ========================================================================= */}
-      {/* 2. PUSAT AKSI CEPAT (QUICK ACCESS SHORTCUTS)                             */}
-      {/* ========================================================================= */}
-      <div className="dashboard-quick-actions mb-4">
-        <div className="quick-actions-header">
-          <h3 className="section-title">Pusat Aksi Cepat</h3>
-          <p className="section-subtitle">Akses langsung ke menu yang paling sering diedit</p>
-        </div>
-        <div className="quick-actions-grid">
-          <Link to="/about/history" className="quick-action-btn">
-            <div className="qa-icon-wrap amber">
-              <ImageIcon size={20} />
-            </div>
-            <div className="qa-texts">
-              <span className="qa-title">Ganti Foto Tim & Sejarah</span>
-              <span className="qa-sub">Update foto kantor dan teks pendiri</span>
-            </div>
-          </Link>
 
-          <Link to="/about/why" className="quick-action-btn">
-            <div className="qa-icon-wrap blue">
-              <Layers size={20} />
-            </div>
-            <div className="qa-texts">
-              <span className="qa-title">Edit Kartu Kenapa Kasbon</span>
-              <span className="qa-sub">3 pilar keunggulan layanan kasbon</span>
-            </div>
-          </Link>
-
-          <Link to="/about/consultation" className="quick-action-btn">
-            <div className="qa-icon-wrap purple">
-              <PhoneCall size={20} />
-            </div>
-            <div className="qa-texts">
-              <span className="qa-title">Edit Banner Konsultasi CS</span>
-              <span className="qa-sub">Atur penawaran dan nomor kontak</span>
-            </div>
-          </Link>
-
-          <Link to="/articles/new" className="quick-action-btn">
-            <div className="qa-icon-wrap green">
-              <PlusCircle size={20} />
-            </div>
-            <div className="qa-texts">
-              <span className="qa-title">Tulis Artikel Baru</span>
-              <span className="qa-sub">Publikasikan edukasi finansial</span>
-            </div>
-          </Link>
-        </div>
-      </div>
 
       {/* ========================================================================= */}
       {/* 3. MONITORING ARTIKEL TERBARU                                            */}

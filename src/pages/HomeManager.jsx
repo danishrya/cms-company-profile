@@ -337,10 +337,7 @@ export default function HomeManager() {
       {/* Page Header */}
       <div className="cms-page-header">
         <div>
-          <div className="d-flex align-center gap-2 mb-1">
-            <span className="badge-stage-pill success-pill">TAHAP 3 AKTIF</span>
-            <span className="text-muted text-sm">• Pengelola Halaman Beranda</span>
-          </div>
+
           <h1 className="cms-page-title">Pengelola Halaman Beranda (Home)</h1>
           <p className="cms-page-subtitle">
             Kustomisasi banner hero utama, kartu keunggulan & layanan, testimoni karyawan, dan banner trial CTA.

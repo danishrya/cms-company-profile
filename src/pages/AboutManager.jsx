@@ -289,10 +289,7 @@ export default function AboutManager() {
       {/* Page Header */}
       <div className="cms-page-header">
         <div>
-          <div className="d-flex align-center gap-2 mb-1">
-            <span className="badge-stage-pill amber">TAHAP 2 AKTIF</span>
-            <span className="text-muted text-sm">• Pengelola Halaman Tentang Kami</span>
-          </div>
+
           <h1 className="cms-page-title">Pengelola Halaman Tentang Kami</h1>
           <p className="cms-page-subtitle">
             Kustomisasi foto dokumentasi tim/kantor, cerita sejarah pendiri, kartu keunggulan, dan banner konsultasi CS.
