@@ -293,7 +293,56 @@ export default function Dashboard() {
         </div>
       </div>
 
+      {/* ========================================================================= */}
+      {/* 2. PUSAT AKSI CEPAT (QUICK ACCESS SHORTCUTS)                             */}
+      {/* ========================================================================= */}
+      <div className="dashboard-quick-actions mb-4">
+        <div className="quick-actions-header">
+          <h3 className="section-title">Pusat Aksi Cepat</h3>
+          <p className="section-subtitle">Akses langsung ke menu yang paling sering diedit</p>
+        </div>
+        <div className="quick-actions-grid">
+          <Link to="/about" className="quick-action-btn">
+            <div className="qa-icon-wrap amber">
+              <ImageIcon size={20} />
+            </div>
+            <div className="qa-texts">
+              <span className="qa-title">Ganti Foto Tim & Sejarah</span>
+              <span className="qa-sub">Update foto kantor dan teks pendiri</span>
+            </div>
+          </Link>
 
+          <Link to="/about" className="quick-action-btn">
+            <div className="qa-icon-wrap blue">
+              <Layers size={20} />
+            </div>
+            <div className="qa-texts">
+              <span className="qa-title">Edit Kartu Kenapa Kasbon</span>
+              <span className="qa-sub">3 pilar keunggulan layanan kasbon</span>
+            </div>
+          </Link>
+
+          <Link to="/about" className="quick-action-btn">
+            <div className="qa-icon-wrap purple">
+              <PhoneCall size={20} />
+            </div>
+            <div className="qa-texts">
+              <span className="qa-title">Edit Banner Konsultasi CS</span>
+              <span className="qa-sub">Atur penawaran dan nomor kontak</span>
+            </div>
+          </Link>
+
+          <Link to="/articles/new" className="quick-action-btn">
+            <div className="qa-icon-wrap green">
+              <PlusCircle size={20} />
+            </div>
+            <div className="qa-texts">
+              <span className="qa-title">Tulis Artikel Baru</span>
+              <span className="qa-sub">Publikasikan edukasi finansial</span>
+            </div>
+          </Link>
+        </div>
+      </div>
 
       {/* ========================================================================= */}
       {/* 3. MONITORING ARTIKEL TERBARU                                            */}
