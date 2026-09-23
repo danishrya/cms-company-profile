@@ -15,13 +15,15 @@ import {
   Upload,
   Link2,
   Trash2,
+  Plus,
   CheckCircle2,
-  CreditCard,
   Gift,
-  ShieldCheck,
-  Zap,
-  Check,
-  HeartHandshake
+  Building2,
+  Award,
+  Monitor,
+  LayoutGrid,
+  Video,
+  PlayCircle
 } from "lucide-react";
 
 // Default data resmi Beranda Ayo Kasbon
@@ -33,10 +35,19 @@ const DEFAULT_HOME_DATA = {
     primaryBtnText: "Mulai Sekarang",
     primaryBtnLink: "https://app.ayokasbon.com/",
     secondaryBtnText: "Pelajari Cara Kerja",
-    secondaryBtnLink: "#keunggulan",
+    secondaryBtnLink: "#panduan",
     mockupImage: "", // Kosong = mockup-phone.svg bawaan
     statusBadge1: "Kasbon Berhasil Ditransfer",
     statusBadge2: "Rp 2.500.000"
+  },
+  partnership: {
+    title: "Sudah dipakai oleh perusahaan terkemuka",
+    list: [
+      { id: 1, name: "Partner Satu", logoUrl: "" },
+      { id: 2, name: "Partner Dua", logoUrl: "" },
+      { id: 4, name: "Partner Tiga", logoUrl: "" },
+      { id: 5, name: "Partner Empat", logoUrl: "" }
+    ]
   },
   features: {
     title: "Benefit Maksimal,",
@@ -61,6 +72,111 @@ const DEFAULT_HOME_DATA = {
         title: "Nol Risiko Perusahaan",
         desc: "Tidak menggunakan dana internal perusahaan.",
         iconType: "check"
+      }
+    ]
+  },
+  quote: {
+    title: "Dana Darurat Bukan Utang.",
+    text: "Hentikan siklus pinjol, turnover karyawan dan absensi tinggi. Digitalisasi sistem kasbon anda untuk menciptakan ekosistem kerja yang lebih sehat dan produktif."
+  },
+  value: {
+    title: "Nilai Lebih yang Kami Berikan.",
+    subtitle: "Inovasi yang berfokus pada kemudahan dan ketenangan Anda.",
+    playStoreUrl: "https://play.google.com/store/apps/details?id=com.kasbon.id",
+    webAppUrl: "https://app.ayokasbon.com/",
+    list: [
+      {
+        id: 1,
+        title: "Dana Darurat dalam Hitungan Menit, Bukan Hari",
+        desc: "Ketika karyawan menghadapi emergency, setiap menit berharga. Ayo Kasbon memastikan dana cair instant ke rekening karyawan 24/7.",
+        iconType: "lightning"
+      },
+      {
+        id: 2,
+        title: "Langkah Sederhana, Tanpa Dokumen Ribet",
+        desc: "Tidak ada formulir panjang, tidak ada fotokopi KTP berkali-kali, tidak ada jaminan. Cukup beberapa tap hanya dari smartphone.",
+        iconType: "mobile"
+      },
+      {
+        id: 3,
+        title: "Pembayaran Otomatis Tanpa Repot",
+        desc: "Karyawan tidak perlu ingat-ingat tanggal bayar, tidak perlu transfer manual, tidak ada denda keterlambatan. Semuanya otomatis.",
+        iconType: "auto"
+      },
+      {
+        id: 4,
+        title: "Proteksi Berlapis untuk Data & Privasi",
+        desc: "Ayo Kasbon menggunakan standar keamanan setara perbankan.",
+        iconType: "shield"
+      },
+      {
+        id: 5,
+        title: "0% Bunga, Denda dan Biaya Tersembunyi",
+        desc: "Ini bukan pinjaman. Ini adalah akses ke gaji yang sudah Anda kerjakan.",
+        iconType: "percent"
+      },
+      {
+        id: 6,
+        title: "Customer Support yang Peduli",
+        desc: "Tim kami siap membantu kapan pun Anda membutuhkan.",
+        iconType: "support"
+      }
+    ]
+  },
+  monitor: {
+    title: "Pantau Transaksi Secara Realtime",
+    subtitle: "Debitur dan Kreditur Dapat Memantau Kasbon Karyawan",
+    infoTitle: "Visibilitas Penuh",
+    infoDesc: "Pantau total pengajuan, status pencairan dana, dan rincian transaksi secara transparan dalam satu dasbor pintar yang mudah dipahami.",
+    mockupImage: "", // Kosong = mockup-dashboard.png bawaan
+    notifHeading: "Berhasil",
+    notifDesc: "Kasbon Berhasil Diterima"
+  },
+  otherBenefits: {
+    title: "Benefit Lain Dari AyoKasbon",
+    subtitle: "Lebih dari sekadar aplikasi kasbon. Kami merancang ekosistem lengkap untuk mendukung kesejahteraan finansial perusahaan Anda.",
+    list: [
+      {
+        id: 1,
+        title: "Integrasi Payroll Otomatis",
+        desc: "Sinkronisasi data karyawan dengan sistem penggajian perusahaan dalam hitungan menit. Tanpa entri data manual, tanpa risiko human error.",
+        iconType: "payroll",
+        isComingSoon: false
+      },
+      {
+        id: 2,
+        title: "Akses Gaji Mandiri (EWA)",
+        desc: "Karyawan dapat menarik persentase gaji yang telah mereka kerjakan kapanpun dibutuhkan. Solusi instan untuk dana darurat tanpa birokrasi kantor.",
+        iconType: "ewa",
+        isComingSoon: false
+      },
+      {
+        id: 3,
+        title: "Sistem Enkripsi Data",
+        desc: "Perlindungan data pribadi karyawan dan perusahaan dengan standar keamanan siber. Kerahasiaan adalah prioritas kami.",
+        iconType: "encryption",
+        isComingSoon: false
+      },
+      {
+        id: 4,
+        title: "Pembayaran Tagihan",
+        desc: "Bantu karyawan mengelola kebutuhan harian sebelum jatuh tempo. Bayar tagihan dari aplikasi praktis, aman, dan tanpa perlu menunggu tanggal gajian.",
+        iconType: "bills",
+        isComingSoon: false
+      },
+      {
+        id: 5,
+        title: "Dasbor Analitik HRD",
+        desc: "Pantau kesehatan finansial organisasi secara agregat dan anonim. Dapatkan data real-time untuk pengambilan keputusan strategis SDM.",
+        iconType: "analytics",
+        isComingSoon: false
+      },
+      {
+        id: 6,
+        title: "Dana Perlindungan Keluarga",
+        desc: "Fasilitas proteksi darurat tambahan untuk situasi kritis di luar dugaan demi menjamin ketenangan keluarga karyawan.",
+        iconType: "community",
+        isComingSoon: true
       }
     ]
   },
@@ -100,6 +216,28 @@ const DEFAULT_HOME_DATA = {
     btnText: "Hubungi Kami",
     btnLink: "/hubungi-kami",
     image: "" // Kosong = cta-image.svg bawaan
+  },
+  videoGuide: {
+    badge: "Panduan Interaktif",
+    title: "Lebih Dekat dengan AyoKasbon",
+    subtitle: "Geser untuk menjelajahi ekosistem kesejahteraan finansial kami melalui seri video panduan berikut.",
+    videos: [
+      {
+        id: 1,
+        filename: "presentasi-v3.mp4",
+        youtubeId: "P2UQiwnUT6o"
+      },
+      {
+        id: 2,
+        filename: "akses-gaji-awal.mp4",
+        youtubeId: "Afv0GhVjeho"
+      },
+      {
+        id: 3,
+        filename: "tutorial-hrd.mp4",
+        youtubeId: "dQw4w9WgXcQ"
+      }
+    ]
   }
 };
 
@@ -115,12 +253,20 @@ export default function HomeManager() {
   const [uploadingHeroMockup, setUploadingHeroMockup] = useState(false);
   const [uploadingFeatureImg, setUploadingFeatureImg] = useState(false);
   const [uploadingCtaImg, setUploadingCtaImg] = useState(false);
+  const [uploadingMonitorMockup, setUploadingMonitorMockup] = useState(false);
+  const [uploadingPartnerIdx, setUploadingPartnerIdx] = useState(null);
 
   const tabs = [
-    { id: "hero", label: "Hero & Banner Utama", icon: Sparkles },
-    { id: "features", label: "Card Layanan & Fitur", icon: Layers },
-    { id: "testimonials", label: "Testimoni Karyawan", icon: MessageSquareQuote },
-    { id: "cta", label: "Banner Trial (CTA)", icon: Gift },
+    { id: "hero", label: "1. Hero Banner", icon: Sparkles },
+    { id: "partnership", label: "2. Mitra / Partner", icon: Building2 },
+    { id: "features", label: "3. Layanan & Fitur", icon: Layers },
+    { id: "quote", label: "4. Kutipan & Visi", icon: MessageSquareQuote },
+    { id: "value", label: "5. Nilai Lebih", icon: Award },
+    { id: "monitor", label: "6. Pantau Transaksi", icon: Monitor },
+    { id: "otherBenefits", label: "7. Keuntungan Lain", icon: LayoutGrid },
+    { id: "testimonials", label: "8. Testimoni", icon: MessageSquareQuote },
+    { id: "cta", label: "9. Banner Trial (CTA)", icon: Gift },
+    { id: "videoGuide", label: "10. Panduan Video", icon: Video },
   ];
 
   // Muat data dari Firestore
@@ -139,17 +285,39 @@ export default function HomeManager() {
           const remoteData = snap.data();
           setFormData({
             hero: { ...DEFAULT_HOME_DATA.hero, ...remoteData.hero },
+            partnership: {
+              ...DEFAULT_HOME_DATA.partnership,
+              ...remoteData.partnership,
+              list: remoteData.partnership?.list?.length ? remoteData.partnership.list : DEFAULT_HOME_DATA.partnership.list
+            },
             features: {
               ...DEFAULT_HOME_DATA.features,
               ...remoteData.features,
               list: remoteData.features?.list?.length ? remoteData.features.list : DEFAULT_HOME_DATA.features.list
+            },
+            quote: { ...DEFAULT_HOME_DATA.quote, ...remoteData.quote },
+            value: {
+              ...DEFAULT_HOME_DATA.value,
+              ...remoteData.value,
+              list: remoteData.value?.list?.length ? remoteData.value.list : DEFAULT_HOME_DATA.value.list
+            },
+            monitor: { ...DEFAULT_HOME_DATA.monitor, ...remoteData.monitor },
+            otherBenefits: {
+              ...DEFAULT_HOME_DATA.otherBenefits,
+              ...remoteData.otherBenefits,
+              list: remoteData.otherBenefits?.list?.length ? remoteData.otherBenefits.list : DEFAULT_HOME_DATA.otherBenefits.list
             },
             testimonials: {
               ...DEFAULT_HOME_DATA.testimonials,
               ...remoteData.testimonials,
               list: remoteData.testimonials?.list?.length ? remoteData.testimonials.list : DEFAULT_HOME_DATA.testimonials.list
             },
-            cta: { ...DEFAULT_HOME_DATA.cta, ...remoteData.cta }
+            cta: { ...DEFAULT_HOME_DATA.cta, ...remoteData.cta },
+            videoGuide: {
+              ...DEFAULT_HOME_DATA.videoGuide,
+              ...remoteData.videoGuide,
+              videos: remoteData.videoGuide?.videos?.length ? remoteData.videoGuide.videos : DEFAULT_HOME_DATA.videoGuide.videos
+            }
           });
         }
       } catch (err) {
@@ -170,7 +338,7 @@ export default function HomeManager() {
   };
 
   // Handler Upload Foto ke Firebase Storage
-  const handleUploadPhoto = async (file, fieldPath, setProgressState) => {
+  const handleUploadPhoto = async (file, onUploaded, setProgressState) => {
     if (!file) return;
 
     if (!file.type.startsWith("image/")) {
@@ -184,10 +352,10 @@ export default function HomeManager() {
     }
 
     try {
-      setProgressState(true);
+      if (setProgressState) setProgressState(true);
       const storageRef = ref(
         storage,
-        `site_content/home/${fieldPath.replace(".", "_")}_${Date.now()}_${file.name}`
+        `site_content/home/${Date.now()}_${file.name.replace(/\s+/g, "_")}`
       );
       const uploadTask = uploadBytesResumable(storageRef, file);
 
@@ -197,38 +365,25 @@ export default function HomeManager() {
         (error) => {
           console.error("Upload error:", error);
           alert("Gagal mengunggah gambar: " + error.message);
-          setProgressState(false);
+          if (setProgressState) setProgressState(false);
         },
         async () => {
           const downloadUrl = await getDownloadURL(uploadTask.snapshot.ref);
-          if (fieldPath === "hero.mockupImage") {
-            setFormData((prev) => ({
-              ...prev,
-              hero: { ...prev.hero, mockupImage: downloadUrl },
-            }));
-          } else if (fieldPath === "features.image") {
-            setFormData((prev) => ({
-              ...prev,
-              features: { ...prev.features, image: downloadUrl },
-            }));
-          } else if (fieldPath === "cta.image") {
-            setFormData((prev) => ({
-              ...prev,
-              cta: { ...prev.cta, image: downloadUrl },
-            }));
+          if (typeof onUploaded === "function") {
+            onUploaded(downloadUrl);
           }
-          setProgressState(false);
-          showToast("Gambar berhasil diunggah dan disimpan ke form!");
+          if (setProgressState) setProgressState(false);
+          showToast("Gambar berhasil diunggah!");
         }
       );
     } catch (err) {
       console.error("Upload error:", err);
       alert("Terjadi kesalahan saat mengunggah: " + err.message);
-      setProgressState(false);
+      if (setProgressState) setProgressState(false);
     }
   };
 
-  // Form Field Handlers
+  // --- Handlers Tab Hero ---
   const handleHeroChange = (field, value) => {
     setFormData((prev) => ({
       ...prev,
@@ -236,6 +391,49 @@ export default function HomeManager() {
     }));
   };
 
+  // --- Handlers Tab Partnership ---
+  const handlePartnerMainChange = (field, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      partnership: { ...prev.partnership, [field]: value },
+    }));
+  };
+
+  const handlePartnerItemChange = (index, field, value) => {
+    setFormData((prev) => {
+      const updated = [...prev.partnership.list];
+      updated[index] = { ...updated[index], [field]: value };
+      return {
+        ...prev,
+        partnership: { ...prev.partnership, list: updated },
+      };
+    });
+  };
+
+  const handleAddPartner = () => {
+    setFormData((prev) => ({
+      ...prev,
+      partnership: {
+        ...prev.partnership,
+        list: [
+          ...prev.partnership.list,
+          { id: Date.now(), name: "Partner Baru", logoUrl: "" }
+        ]
+      }
+    }));
+  };
+
+  const handleDeletePartner = (index) => {
+    setFormData((prev) => {
+      const updated = prev.partnership.list.filter((_, idx) => idx !== index);
+      return {
+        ...prev,
+        partnership: { ...prev.partnership, list: updated }
+      };
+    });
+  };
+
+  // --- Handlers Tab Features ---
   const handleFeatureMainChange = (field, value) => {
     setFormData((prev) => ({
       ...prev,
@@ -254,6 +452,107 @@ export default function HomeManager() {
     });
   };
 
+  // --- Handlers Tab Quote ---
+  const handleQuoteChange = (field, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      quote: { ...prev.quote, [field]: value },
+    }));
+  };
+
+  // --- Handlers Tab Value ---
+  const handleValueMainChange = (field, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      value: { ...prev.value, [field]: value },
+    }));
+  };
+
+  const handleValueItemChange = (index, field, value) => {
+    setFormData((prev) => {
+      const updated = [...prev.value.list];
+      updated[index] = { ...updated[index], [field]: value };
+      return {
+        ...prev,
+        value: { ...prev.value, list: updated },
+      };
+    });
+  };
+
+  const handleAddValueItem = () => {
+    setFormData((prev) => ({
+      ...prev,
+      value: {
+        ...prev.value,
+        list: [
+          ...prev.value.list,
+          { id: Date.now(), title: "Keunggulan Baru", desc: "Deskripsi singkat keunggulan...", iconType: "lightning" }
+        ]
+      }
+    }));
+  };
+
+  const handleDeleteValueItem = (index) => {
+    setFormData((prev) => ({
+      ...prev,
+      value: {
+        ...prev.value,
+        list: prev.value.list.filter((_, idx) => idx !== index)
+      }
+    }));
+  };
+
+  // --- Handlers Tab Monitor Transactions ---
+  const handleMonitorChange = (field, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      monitor: { ...prev.monitor, [field]: value },
+    }));
+  };
+
+  // --- Handlers Tab Other Benefits ---
+  const handleOtherBenefitsMainChange = (field, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      otherBenefits: { ...prev.otherBenefits, [field]: value },
+    }));
+  };
+
+  const handleOtherBenefitsItemChange = (index, field, value) => {
+    setFormData((prev) => {
+      const updated = [...prev.otherBenefits.list];
+      updated[index] = { ...updated[index], [field]: value };
+      return {
+        ...prev,
+        otherBenefits: { ...prev.otherBenefits, list: updated },
+      };
+    });
+  };
+
+  const handleAddBenefitItem = () => {
+    setFormData((prev) => ({
+      ...prev,
+      otherBenefits: {
+        ...prev.otherBenefits,
+        list: [
+          ...prev.otherBenefits.list,
+          { id: Date.now(), title: "Benefit Tambahan", desc: "Penjelasan benefit baru...", iconType: "payroll", isComingSoon: false }
+        ]
+      }
+    }));
+  };
+
+  const handleDeleteBenefitItem = (index) => {
+    setFormData((prev) => ({
+      ...prev,
+      otherBenefits: {
+        ...prev.otherBenefits,
+        list: prev.otherBenefits.list.filter((_, idx) => idx !== index)
+      }
+    }));
+  };
+
+  // --- Handlers Tab Testimonials ---
   const handleTestimonialMainChange = (field, value) => {
     setFormData((prev) => ({
       ...prev,
@@ -272,6 +571,7 @@ export default function HomeManager() {
     });
   };
 
+  // --- Handlers Tab CTA ---
   const handleCtaChange = (field, value) => {
     setFormData((prev) => ({
       ...prev,
@@ -279,7 +579,49 @@ export default function HomeManager() {
     }));
   };
 
-  // Simpan Semua Perubahan ke Firestore
+  // --- Handlers Tab Video Guide ---
+  const handleVideoMainChange = (field, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      videoGuide: { ...prev.videoGuide, [field]: value },
+    }));
+  };
+
+  const handleVideoItemChange = (index, field, value) => {
+    setFormData((prev) => {
+      const updated = [...prev.videoGuide.videos];
+      updated[index] = { ...updated[index], [field]: value };
+      return {
+        ...prev,
+        videoGuide: { ...prev.videoGuide, videos: updated },
+      };
+    });
+  };
+
+  const handleAddVideo = () => {
+    setFormData((prev) => ({
+      ...prev,
+      videoGuide: {
+        ...prev.videoGuide,
+        videos: [
+          ...prev.videoGuide.videos,
+          { id: Date.now(), filename: `panduan-baru-${prev.videoGuide.videos.length + 1}.mp4`, youtubeId: "" }
+        ]
+      }
+    }));
+  };
+
+  const handleDeleteVideo = (index) => {
+    setFormData((prev) => ({
+      ...prev,
+      videoGuide: {
+        ...prev.videoGuide,
+        videos: prev.videoGuide.videos.filter((_, idx) => idx !== index)
+      }
+    }));
+  };
+
+  // Simpan ke Firestore
   const handleSave = async () => {
     try {
       setSaving(true);
@@ -297,7 +639,7 @@ export default function HomeManager() {
         await setDoc(doc(db, "site_content", "home"), payload, { merge: true });
       } catch {}
 
-      showToast("✅ Berhasil disimpan! Halaman Beranda di website utama sudah diperbarui.");
+      showToast("Berhasil disimpan! Halaman Beranda di website utama sudah diperbarui.");
     } catch (err) {
       console.error("Gagal menyimpan ke Firestore:", err);
       alert("Gagal menyimpan perubahan: " + err.message);
@@ -337,10 +679,9 @@ export default function HomeManager() {
       {/* Page Header */}
       <div className="cms-page-header">
         <div>
-
           <h1 className="cms-page-title">Pengelola Halaman Beranda (Home)</h1>
           <p className="cms-page-subtitle">
-            Kustomisasi banner hero utama, kartu keunggulan & layanan, testimoni karyawan, dan banner trial CTA.
+            Kustomisasi 10 section lengkap halaman Beranda AyoKasbon dari Hero, Mitra, Layanan, Nilai, Dashboard, hingga Video Guide.
           </p>
         </div>
 
@@ -356,7 +697,7 @@ export default function HomeManager() {
           </button>
 
           <a
-            href="http://localhost:5173/"
+            href="http://localhost:5175/"
             target="_blank"
             rel="noreferrer"
             className="btn-secondary-action"
@@ -378,7 +719,7 @@ export default function HomeManager() {
       </div>
 
       {/* Tabs Navigation */}
-      <div className="cms-tabs-container mb-4">
+      <div className="cms-tabs-container mb-4" style={{ flexWrap: "wrap", gap: "8px" }}>
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = section === tab.id;
@@ -449,141 +790,252 @@ export default function HomeManager() {
                   type="text"
                   value={formData.hero.primaryBtnText}
                   onChange={(e) => handleHeroChange("primaryBtnText", e.target.value)}
-                  placeholder="Teks: Mulai Sekarang"
+                  placeholder="Teks Tombol (cth: Mulai Sekarang)"
                   className="form-input"
                 />
                 <input
                   type="text"
                   value={formData.hero.primaryBtnLink}
                   onChange={(e) => handleHeroChange("primaryBtnLink", e.target.value)}
-                  placeholder="Link: https://app.ayokasbon.com/"
+                  placeholder="Link Tujuan (cth: https://app.ayokasbon.com/)"
                   className="form-input"
                 />
               </div>
             </div>
 
             <div className="form-half-col">
-              <label className="form-label-bold">5. Tombol Kedua (Secondary CTA)</label>
+              <label className="form-label-bold">5. Tombol Sekunder (Secondary CTA)</label>
               <div className="d-flex gap-2">
                 <input
                   type="text"
                   value={formData.hero.secondaryBtnText}
                   onChange={(e) => handleHeroChange("secondaryBtnText", e.target.value)}
-                  placeholder="Teks: Pelajari Cara Kerja"
+                  placeholder="Teks Tombol (cth: Pelajari Cara Kerja)"
                   className="form-input"
                 />
                 <input
                   type="text"
                   value={formData.hero.secondaryBtnLink}
                   onChange={(e) => handleHeroChange("secondaryBtnLink", e.target.value)}
-                  placeholder="Link: #keunggulan"
+                  placeholder="Link Tujuan (cth: #panduan)"
                   className="form-input"
                 />
               </div>
             </div>
 
-            {/* Mockup Smartphone Image */}
-            <div className="form-full-col">
-              <label className="form-label-bold">6. Gambar Mockup Smartphone Aplikasi</label>
-              <p className="form-hint-text">Mockup smartphone di sebelah kanan hero banner.</p>
-
-              <div className="photo-manager-layout">
-                <div className="photo-preview-box mockup">
-                  {formData.hero.mockupImage ? (
-                    <img
-                      src={formData.hero.mockupImage}
-                      alt="Hero Mockup"
-                      className="photo-preview-image contain"
-                    />
-                  ) : (
-                    <div className="photo-preview-default">
-                      <ImageIcon size={36} className="text-muted" />
-                      <span>Mockup Smartphone Bawaan (mockup-phone.svg)</span>
-                    </div>
-                  )}
-                  {formData.hero.mockupImage && (
-                    <button
-                      type="button"
-                      onClick={() => handleHeroChange("mockupImage", "")}
-                      className="btn-remove-photo"
-                    >
-                      <Trash2 size={14} />
-                      <span>Gunakan Gambar Bawaan</span>
-                    </button>
-                  )}
-                </div>
-
-                <div className="photo-inputs-box">
-                  <div className="upload-file-dropzone">
-                    <input
-                      type="file"
-                      id="hero-mockup-input"
-                      accept="image/*"
-                      style={{ display: "none" }}
-                      onChange={(e) => {
-                        if (e.target.files?.[0]) {
-                          handleUploadPhoto(e.target.files[0], "hero.mockupImage", setUploadingHeroMockup);
-                        }
-                      }}
-                    />
-                    <label htmlFor="hero-mockup-input" className="btn-upload-file">
-                      <Upload size={16} />
-                      <span>{uploadingHeroMockup ? "Mengunggah..." : "Upload Gambar Mockup"}</span>
-                    </label>
-                  </div>
-
-                  <div className="divider-or">
-                    <span>atau masukkan URL gambar</span>
-                  </div>
-
-                  <div className="input-with-icon">
-                    <Link2 size={16} className="input-icon" />
-                    <input
-                      type="url"
-                      placeholder="https://contoh.com/mockup-app.svg"
-                      value={formData.hero.mockupImage}
-                      onChange={(e) => handleHeroChange("mockupImage", e.target.value)}
-                      className="form-input"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Badge floating pada mockup */}
             <div className="form-half-col">
-              <label className="form-label-bold">7. Label Badge Melayang #1</label>
+              <label className="form-label-bold">6. Badge Melayang 1 (Notifikasi)</label>
               <input
                 type="text"
                 value={formData.hero.statusBadge1}
                 onChange={(e) => handleHeroChange("statusBadge1", e.target.value)}
-                placeholder="Kasbon Berhasil Ditransfer"
+                placeholder="cth: Kasbon Berhasil Ditransfer"
                 className="form-input"
               />
             </div>
 
             <div className="form-half-col">
-              <label className="form-label-bold">8. Label Badge Melayang #2</label>
+              <label className="form-label-bold">7. Badge Melayang 2 (Nominal)</label>
               <input
                 type="text"
                 value={formData.hero.statusBadge2}
                 onChange={(e) => handleHeroChange("statusBadge2", e.target.value)}
-                placeholder="Rp 2.500.000"
+                placeholder="cth: Rp 2.500.000"
                 className="form-input"
               />
+            </div>
+
+            <div className="form-full-col">
+              <label className="form-label-bold">8. Gambar Mockup Smartphone</label>
+              <div className="cms-image-upload-box">
+                <div className="d-flex align-items-center gap-3">
+                  {formData.hero.mockupImage ? (
+                    <img 
+                      src={formData.hero.mockupImage} 
+                      alt="Mockup Phone Preview" 
+                      className="cms-img-thumb"
+                      style={{ maxHeight: "80px", maxWidth: "120px", objectFit: "contain" }}
+                    />
+                  ) : (
+                    <div className="cms-img-placeholder">
+                      <ImageIcon size={24} />
+                      <span>Menggunakan SVG Bawaan</span>
+                    </div>
+                  )}
+
+                  <div className="flex-1">
+                    <input
+                      type="text"
+                      value={formData.hero.mockupImage}
+                      onChange={(e) => handleHeroChange("mockupImage", e.target.value)}
+                      placeholder="URL Gambar Mockup (atau upload langsung dari file)"
+                      className="form-input mb-2"
+                    />
+
+                    <div className="d-flex gap-2">
+                      <label className="btn-upload-file">
+                        <Upload size={14} />
+                        <span>{uploadingHeroMockup ? "Mengunggah..." : "Upload File Mockup"}</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          style={{ display: "none" }}
+                          disabled={uploadingHeroMockup}
+                          onChange={(e) => handleUploadPhoto(
+                            e.target.files[0], 
+                            (url) => handleHeroChange("mockupImage", url), 
+                            setUploadingHeroMockup
+                          )}
+                        />
+                      </label>
+
+                      {formData.hero.mockupImage && (
+                        <button
+                          type="button"
+                          onClick={() => handleHeroChange("mockupImage", "")}
+                          className="btn-danger-ghost"
+                          title="Hapus gambar custom dan gunakan bawaan"
+                        >
+                          <Trash2 size={14} />
+                          <span>Gunakan Bawaan</span>
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       )}
 
       {/* ========================================================================= */}
-      {/* TAB 2: CARD LAYANAN & FITUR                                               */}
+      {/* TAB 2: MITRA / PARTNERSHIP                                                */}
+      {/* ========================================================================= */}
+      {section === "partnership" && (
+        <div className="cms-editor-card">
+          <div className="editor-card-header">
+            <div>
+              <h3>Modul 2: Mitra & Partner Perusahaan</h3>
+              <p>Kelola judul running marquee dan daftar logo partner/klien terkemuka.</p>
+            </div>
+            <span className="badge-live-tag">Terkoneksi ke / (Beranda)</span>
+          </div>
+
+          <div className="form-grid-layout">
+            <div className="form-full-col">
+              <label className="form-label-bold">1. Judul Bagian</label>
+              <input
+                type="text"
+                value={formData.partnership.title}
+                onChange={(e) => handlePartnerMainChange("title", e.target.value)}
+                placeholder="Sudah dipakai oleh perusahaan terkemuka"
+                className="form-input"
+              />
+            </div>
+
+            <div className="form-full-col">
+              <div className="d-flex justify-content-between align-items-center mb-3">
+                <label className="form-label-bold mb-0">2. Daftar Logo Partner ({formData.partnership.list.length} Logo)</label>
+                <button
+                  type="button"
+                  onClick={handleAddPartner}
+                  className="btn-secondary-action btn-sm"
+                >
+                  <Plus size={14} />
+                  <span>Tambah Partner</span>
+                </button>
+              </div>
+
+              <div className="cards-editor-grid">
+                {formData.partnership.list.map((item, idx) => (
+                  <div key={item.id || idx} className="card-editor-item">
+                    <div className="card-item-header">
+                      <span className="card-idx-badge">PARTNER #{idx + 1}</span>
+                      <button
+                        type="button"
+                        onClick={() => handleDeletePartner(idx)}
+                        className="btn-delete-card"
+                        title="Hapus Partner"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+
+                    <div className="card-item-fields">
+                      <div className="mb-2">
+                        <label className="mini-label">Nama Partner</label>
+                        <input
+                          type="text"
+                          value={item.name}
+                          onChange={(e) => handlePartnerItemChange(idx, "name", e.target.value)}
+                          placeholder="Nama Perusahaan"
+                          className="form-input form-input-sm"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="mini-label">URL Logo / Unggah Gambar</label>
+                        <div className="d-flex gap-2 align-items-center">
+                          {item.logoUrl ? (
+                            <img 
+                              src={item.logoUrl} 
+                              alt={item.name} 
+                              style={{ width: "40px", height: "40px", objectFit: "contain", background: "#ffffff", borderRadius: "6px", border: "1px solid #e2e8f0" }}
+                            />
+                          ) : (
+                            <div style={{ width: "40px", height: "40px", display: "flex", alignItems: "center", justifyContent: "center", background: "#ffffff", borderRadius: "6px", border: "1px dashed #cbd5e1" }}>
+                              <ImageIcon size={18} color="#94a3b8" />
+                            </div>
+                          )}
+
+                          <input
+                            type="text"
+                            value={item.logoUrl}
+                            onChange={(e) => handlePartnerItemChange(idx, "logoUrl", e.target.value)}
+                            placeholder="https://... atau upload file"
+                            className="form-input form-input-sm flex-1"
+                          />
+
+                          <label className="btn-upload-file btn-sm" style={{ cursor: "pointer", whiteSpace: "nowrap" }}>
+                            <Upload size={12} />
+                            <span>{uploadingPartnerIdx === idx ? "..." : "Upload"}</span>
+                            <input
+                              type="file"
+                              accept="image/*"
+                              style={{ display: "none" }}
+                              onChange={(e) => {
+                                setUploadingPartnerIdx(idx);
+                                handleUploadPhoto(
+                                  e.target.files[0],
+                                  (url) => {
+                                    handlePartnerItemChange(idx, "logoUrl", url);
+                                    setUploadingPartnerIdx(null);
+                                  },
+                                  () => setUploadingPartnerIdx(null)
+                                );
+                              }}
+                            />
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* TAB 3: FITUR & BENEFIT LAYANAN                                            */}
       {/* ========================================================================= */}
       {section === "features" && (
         <div className="cms-editor-card">
           <div className="editor-card-header">
             <div>
-              <h3>Modul 2: Card Layanan & Keunggulan Utama</h3>
+              <h3>Modul 3: Card Layanan & Keunggulan Utama</h3>
               <p>Kelola judul, subjudul, ilustrasi gambar, dan 3 kartu fitur keunggulan.</p>
             </div>
             <span className="badge-live-tag">Terkoneksi ke / (Beranda)</span>
@@ -618,81 +1070,74 @@ export default function HomeManager() {
                 rows={2}
                 value={formData.features.subtitle}
                 onChange={(e) => handleFeatureMainChange("subtitle", e.target.value)}
-                placeholder="AyoKasbon dirancang untuk memberikan ketenangan pikiran..."
+                placeholder="AyoKasbon dirancang untuk..."
                 className="form-textarea"
               />
             </div>
 
-            {/* Gambar Ilustrasi Sisi Kiri */}
             <div className="form-full-col">
-              <label className="form-label-bold">4. Gambar Ilustrasi Keunggulan</label>
-              <div className="photo-manager-layout">
-                <div className="photo-preview-box">
+              <label className="form-label-bold">4. Gambar Ilustrasi Fitur (Sebelah Kanan)</label>
+              <div className="cms-image-upload-box">
+                <div className="d-flex align-items-center gap-3">
                   {formData.features.image ? (
-                    <img
-                      src={formData.features.image}
-                      alt="Feature Visual"
-                      className="photo-preview-image contain"
+                    <img 
+                      src={formData.features.image} 
+                      alt="Feature Illustration Preview" 
+                      className="cms-img-thumb"
+                      style={{ maxHeight: "80px", maxWidth: "120px", objectFit: "contain" }}
                     />
                   ) : (
-                    <div className="photo-preview-default">
-                      <ImageIcon size={36} className="text-muted" />
-                      <span>Gambar Ilustrasi Bawaan (features-image.png)</span>
+                    <div className="cms-img-placeholder">
+                      <ImageIcon size={24} />
+                      <span>Menggunakan Gambar PNG Bawaan</span>
                     </div>
                   )}
-                  {formData.features.image && (
-                    <button
-                      type="button"
-                      onClick={() => handleFeatureMainChange("image", "")}
-                      className="btn-remove-photo"
-                    >
-                      <Trash2 size={14} />
-                      <span>Gunakan Gambar Bawaan</span>
-                    </button>
-                  )}
-                </div>
 
-                <div className="photo-inputs-box">
-                  <div className="upload-file-dropzone">
+                  <div className="flex-1">
                     <input
-                      type="file"
-                      id="features-img-input"
-                      accept="image/*"
-                      style={{ display: "none" }}
-                      onChange={(e) => {
-                        if (e.target.files?.[0]) {
-                          handleUploadPhoto(e.target.files[0], "features.image", setUploadingFeatureImg);
-                        }
-                      }}
-                    />
-                    <label htmlFor="features-img-input" className="btn-upload-file">
-                      <Upload size={16} />
-                      <span>{uploadingFeatureImg ? "Mengunggah..." : "Upload Gambar Ilustrasi"}</span>
-                    </label>
-                  </div>
-
-                  <div className="divider-or">
-                    <span>atau masukkan URL gambar</span>
-                  </div>
-
-                  <div className="input-with-icon">
-                    <Link2 size={16} className="input-icon" />
-                    <input
-                      type="url"
-                      placeholder="https://contoh.com/features-image.png"
+                      type="text"
                       value={formData.features.image}
                       onChange={(e) => handleFeatureMainChange("image", e.target.value)}
-                      className="form-input"
+                      placeholder="URL Gambar Ilustrasi Fitur"
+                      className="form-input mb-2"
                     />
+
+                    <div className="d-flex gap-2">
+                      <label className="btn-upload-file">
+                        <Upload size={14} />
+                        <span>{uploadingFeatureImg ? "Mengunggah..." : "Upload File Ilustrasi"}</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          style={{ display: "none" }}
+                          disabled={uploadingFeatureImg}
+                          onChange={(e) => handleUploadPhoto(
+                            e.target.files[0], 
+                            (url) => handleFeatureMainChange("image", url), 
+                            setUploadingFeatureImg
+                          )}
+                        />
+                      </label>
+
+                      {formData.features.image && (
+                        <button
+                          type="button"
+                          onClick={() => handleFeatureMainChange("image", "")}
+                          className="btn-danger-ghost"
+                          title="Hapus gambar custom dan gunakan bawaan"
+                        >
+                          <Trash2 size={14} />
+                          <span>Gunakan Bawaan</span>
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* List 3 Kartu Keunggulan */}
             <div className="form-full-col">
-              <label className="form-label-bold mb-3">5. Konfigurasi 3 Kartu Keunggulan</label>
-              
+              <label className="form-label-bold mb-3">5. Daftar Kartu Layanan (3 Kartu)</label>
               <div className="cards-editor-grid">
                 {formData.features.list.map((item, idx) => (
                   <div key={item.id || idx} className="card-editor-item">
@@ -724,12 +1169,12 @@ export default function HomeManager() {
                       </div>
 
                       <div>
-                        <label className="mini-label">Penjelasan Singkat</label>
+                        <label className="mini-label">Deskripsi Kartu</label>
                         <textarea
-                          rows={3}
+                          rows={2}
                           value={item.desc}
                           onChange={(e) => handleFeatureItemChange(idx, "desc", e.target.value)}
-                          placeholder="Deskripsi..."
+                          placeholder="Deskripsi singkat..."
                           className="form-textarea form-textarea-sm"
                         />
                       </div>
@@ -743,21 +1188,455 @@ export default function HomeManager() {
       )}
 
       {/* ========================================================================= */}
-      {/* TAB 3: TESTIMONI KARYAWAN                                                 */}
+      {/* TAB 4: KUTIPAN & VISI (QUOTE)                                             */}
       {/* ========================================================================= */}
-      {section === "testimonials" && (
+      {section === "quote" && (
         <div className="cms-editor-card">
           <div className="editor-card-header">
             <div>
-              <h3>Modul 3: Testimoni & Ulasan Karyawan</h3>
-              <p>Kelola judul, ulasan karyawan, nama perusahaan, serta inisial profil.</p>
+              <h3>Modul 4: Banner Kutipan & Visi (Quote)</h3>
+              <p>Kelola kutipan besar inspiratif di tengah halaman beranda.</p>
+            </div>
+            <span className="badge-live-tag">Terkoneksi ke / (Beranda)</span>
+          </div>
+
+          <div className="form-grid-layout">
+            <div className="form-full-col">
+              <label className="form-label-bold">1. Judul Kutipan Utama</label>
+              <input
+                type="text"
+                value={formData.quote.title}
+                onChange={(e) => handleQuoteChange("title", e.target.value)}
+                placeholder="Dana Darurat Bukan Utang."
+                className="form-input"
+              />
+            </div>
+
+            <div className="form-full-col">
+              <label className="form-label-bold">2. Teks Narasi Kutipan</label>
+              <textarea
+                rows={4}
+                value={formData.quote.text}
+                onChange={(e) => handleQuoteChange("text", e.target.value)}
+                placeholder="Hentikan siklus pinjol, turnover karyawan..."
+                className="form-textarea"
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* TAB 5: NILAI LEBIH & LINK APLIKASI (VALUE)                                */}
+      {/* ========================================================================= */}
+      {section === "value" && (
+        <div className="cms-editor-card">
+          <div className="editor-card-header">
+            <div>
+              <h3>Modul 5: Nilai Lebih yang Kami Berikan & Link Download Aplikasi</h3>
+              <p>Atur header nilai lebih, link Google Play & Web App, serta 6 kartu keunggulan.</p>
             </div>
             <span className="badge-live-tag">Terkoneksi ke / (Beranda)</span>
           </div>
 
           <div className="form-grid-layout">
             <div className="form-half-col">
-              <label className="form-label-bold">1. Judul Bagian</label>
+              <label className="form-label-bold">1. Judul Section</label>
+              <input
+                type="text"
+                value={formData.value.title}
+                onChange={(e) => handleValueMainChange("title", e.target.value)}
+                placeholder="Nilai Lebih yang Kami Berikan."
+                className="form-input"
+              />
+            </div>
+
+            <div className="form-half-col">
+              <label className="form-label-bold">2. Subjudul Section</label>
+              <input
+                type="text"
+                value={formData.value.subtitle}
+                onChange={(e) => handleValueMainChange("subtitle", e.target.value)}
+                placeholder="Inovasi yang berfokus pada kemudahan..."
+                className="form-input"
+              />
+            </div>
+
+            <div className="form-half-col">
+              <label className="form-label-bold">3. Link Google Play Store</label>
+              <input
+                type="text"
+                value={formData.value.playStoreUrl}
+                onChange={(e) => handleValueMainChange("playStoreUrl", e.target.value)}
+                placeholder="https://play.google.com/store/apps/details?id=com.kasbon.id"
+                className="form-input"
+              />
+            </div>
+
+            <div className="form-half-col">
+              <label className="form-label-bold">4. Link Web App (Akses Browser)</label>
+              <input
+                type="text"
+                value={formData.value.webAppUrl}
+                onChange={(e) => handleValueMainChange("webAppUrl", e.target.value)}
+                placeholder="https://app.ayokasbon.com/"
+                className="form-input"
+              />
+            </div>
+
+            <div className="form-full-col">
+              <div className="d-flex justify-content-between align-items-center mb-3">
+                <label className="form-label-bold mb-0">5. Kartu Nilai Lebih ({formData.value.list.length} Kartu)</label>
+                <button
+                  type="button"
+                  onClick={handleAddValueItem}
+                  className="btn-secondary-action btn-sm"
+                >
+                  <Plus size={14} />
+                  <span>Tambah Kartu</span>
+                </button>
+              </div>
+
+              <div className="cards-editor-grid">
+                {formData.value.list.map((item, idx) => (
+                  <div key={item.id || idx} className="card-editor-item">
+                    <div className="card-item-header">
+                      <span className="card-idx-badge">KARTU #{idx + 1}</span>
+                      <div className="d-flex align-items-center gap-2">
+                        <select
+                          value={item.iconType || "lightning"}
+                          onChange={(e) => handleValueItemChange(idx, "iconType", e.target.value)}
+                          className="select-icon-type"
+                        >
+                          <option value="lightning">Ikon: Petir (Cair Cepat)</option>
+                          <option value="mobile">Ikon: Smartphone (Mudah)</option>
+                          <option value="auto">Ikon: Refresh (Otomatis)</option>
+                          <option value="shield">Ikon: Shield (Keamanan)</option>
+                          <option value="percent">Ikon: 0% Bunga (Transparan)</option>
+                          <option value="support">Ikon: Support (Bantuan)</option>
+                        </select>
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteValueItem(idx)}
+                          className="btn-delete-card"
+                          title="Hapus Kartu"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="card-item-fields">
+                      <div className="mb-2">
+                        <label className="mini-label">Judul Keunggulan</label>
+                        <input
+                          type="text"
+                          value={item.title}
+                          onChange={(e) => handleValueItemChange(idx, "title", e.target.value)}
+                          placeholder="Judul Nilai"
+                          className="form-input form-input-sm"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="mini-label">Deskripsi</label>
+                        <textarea
+                          rows={2}
+                          value={item.desc}
+                          onChange={(e) => handleValueItemChange(idx, "desc", e.target.value)}
+                          placeholder="Penjelasan..."
+                          className="form-textarea form-textarea-sm"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* TAB 6: PANTAU TRANSAKSI (MONITOR)                                         */}
+      {/* ========================================================================= */}
+      {section === "monitor" && (
+        <div className="cms-editor-card">
+          <div className="editor-card-header">
+            <div>
+              <h3>Modul 6: Pantau Transaksi Secara Realtime</h3>
+              <p>Atur teks judul, deskripsi kartu info melayang, notifikasi melayang, serta gambar mockup dashboard.</p>
+            </div>
+            <span className="badge-live-tag">Terkoneksi ke / (Beranda)</span>
+          </div>
+
+          <div className="form-grid-layout">
+            <div className="form-half-col">
+              <label className="form-label-bold">1. Judul Section</label>
+              <input
+                type="text"
+                value={formData.monitor.title}
+                onChange={(e) => handleMonitorChange("title", e.target.value)}
+                placeholder="Pantau Transaksi Secara Realtime"
+                className="form-input"
+              />
+            </div>
+
+            <div className="form-half-col">
+              <label className="form-label-bold">2. Subjudul Section</label>
+              <input
+                type="text"
+                value={formData.monitor.subtitle}
+                onChange={(e) => handleMonitorChange("subtitle", e.target.value)}
+                placeholder="Debitur dan Kreditur Dapat Memantau Kasbon Karyawan"
+                className="form-input"
+              />
+            </div>
+
+            <div className="form-half-col">
+              <label className="form-label-bold">3. Judul Kartu Info Melayang</label>
+              <input
+                type="text"
+                value={formData.monitor.infoTitle}
+                onChange={(e) => handleMonitorChange("infoTitle", e.target.value)}
+                placeholder="Visibilitas Penuh"
+                className="form-input"
+              />
+            </div>
+
+            <div className="form-half-col">
+              <label className="form-label-bold">4. Notifikasi Melayang (Judul & Subjudul)</label>
+              <div className="d-flex gap-2">
+                <input
+                  type="text"
+                  value={formData.monitor.notifHeading}
+                  onChange={(e) => handleMonitorChange("notifHeading", e.target.value)}
+                  placeholder="Heading (Berhasil)"
+                  className="form-input"
+                />
+                <input
+                  type="text"
+                  value={formData.monitor.notifDesc}
+                  onChange={(e) => handleMonitorChange("notifDesc", e.target.value)}
+                  placeholder="Subteks (Kasbon Berhasil Diterima)"
+                  className="form-input"
+                />
+              </div>
+            </div>
+
+            <div className="form-full-col">
+              <label className="form-label-bold">5. Paragraf Deskripsi Kartu Info Melayang</label>
+              <textarea
+                rows={3}
+                value={formData.monitor.infoDesc}
+                onChange={(e) => handleMonitorChange("infoDesc", e.target.value)}
+                placeholder="Pantau total pengajuan, status pencairan dana..."
+                className="form-textarea"
+              />
+            </div>
+
+            <div className="form-full-col">
+              <label className="form-label-bold">6. Foto Mockup Dashboard Transaksi</label>
+              <div className="cms-image-upload-box">
+                <div className="d-flex align-items-center gap-3">
+                  {formData.monitor.mockupImage ? (
+                    <img 
+                      src={formData.monitor.mockupImage} 
+                      alt="Dashboard Mockup Preview" 
+                      className="cms-img-thumb"
+                      style={{ maxHeight: "80px", maxWidth: "140px", objectFit: "contain" }}
+                    />
+                  ) : (
+                    <div className="cms-img-placeholder">
+                      <ImageIcon size={24} />
+                      <span>Menggunakan Gambar Mockup Bawaan</span>
+                    </div>
+                  )}
+
+                  <div className="flex-1">
+                    <input
+                      type="text"
+                      value={formData.monitor.mockupImage}
+                      onChange={(e) => handleMonitorChange("mockupImage", e.target.value)}
+                      placeholder="URL Gambar Mockup Dashboard"
+                      className="form-input mb-2"
+                    />
+
+                    <div className="d-flex gap-2">
+                      <label className="btn-upload-file">
+                        <Upload size={14} />
+                        <span>{uploadingMonitorMockup ? "Mengunggah..." : "Upload File Dashboard"}</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          style={{ display: "none" }}
+                          disabled={uploadingMonitorMockup}
+                          onChange={(e) => handleUploadPhoto(
+                            e.target.files[0], 
+                            (url) => handleMonitorChange("mockupImage", url), 
+                            setUploadingMonitorMockup
+                          )}
+                        />
+                      </label>
+
+                      {formData.monitor.mockupImage && (
+                        <button
+                          type="button"
+                          onClick={() => handleMonitorChange("mockupImage", "")}
+                          className="btn-danger-ghost"
+                          title="Gunakan mockup bawaan"
+                        >
+                          <Trash2 size={14} />
+                          <span>Gunakan Bawaan</span>
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* TAB 7: KEUNTUNGAN LAINNYA (OTHER BENEFITS)                                */}
+      {/* ========================================================================= */}
+      {section === "otherBenefits" && (
+        <div className="cms-editor-card">
+          <div className="editor-card-header">
+            <div>
+              <h3>Modul 7: Keuntungan Lainnya (Other Benefits)</h3>
+              <p>Atur header dan kartu-kartu ekosistem lengkap manfaat AyoKasbon.</p>
+            </div>
+            <span className="badge-live-tag">Terkoneksi ke / (Beranda)</span>
+          </div>
+
+          <div className="form-grid-layout">
+            <div className="form-half-col">
+              <label className="form-label-bold">1. Judul Section</label>
+              <input
+                type="text"
+                value={formData.otherBenefits.title}
+                onChange={(e) => handleOtherBenefitsMainChange("title", e.target.value)}
+                placeholder="Benefit Lain Dari AyoKasbon"
+                className="form-input"
+              />
+            </div>
+
+            <div className="form-half-col">
+              <label className="form-label-bold">2. Subjudul Section</label>
+              <input
+                type="text"
+                value={formData.otherBenefits.subtitle}
+                onChange={(e) => handleOtherBenefitsMainChange("subtitle", e.target.value)}
+                placeholder="Lebih dari sekadar aplikasi kasbon..."
+                className="form-input"
+              />
+            </div>
+
+            <div className="form-full-col">
+              <div className="d-flex justify-content-between align-items-center mb-3">
+                <label className="form-label-bold mb-0">3. Daftar Kartu Manfaat ({formData.otherBenefits.list.length} Kartu)</label>
+                <button
+                  type="button"
+                  onClick={handleAddBenefitItem}
+                  className="btn-secondary-action btn-sm"
+                >
+                  <Plus size={14} />
+                  <span>Tambah Kartu</span>
+                </button>
+              </div>
+
+              <div className="cards-editor-grid">
+                {formData.otherBenefits.list.map((item, idx) => (
+                  <div key={item.id || idx} className="card-editor-item">
+                    <div className="card-item-header">
+                      <span className="card-idx-badge">BENEFIT #{idx + 1}</span>
+                      <div className="d-flex align-items-center gap-2">
+                        <select
+                          value={item.iconType || "payroll"}
+                          onChange={(e) => handleOtherBenefitsItemChange(idx, "iconType", e.target.value)}
+                          className="select-icon-type"
+                        >
+                          <option value="payroll">Ikon: Payroll (Otomatis)</option>
+                          <option value="ewa">Ikon: EWA (Akses Gaji)</option>
+                          <option value="encryption">Ikon: Enkripsi (Keamanan)</option>
+                          <option value="bills">Ikon: Tagihan (Pembayaran)</option>
+                          <option value="analytics">Ikon: Analitik (HRD)</option>
+                          <option value="community">Ikon: Keluarga (Proteksi)</option>
+                        </select>
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteBenefitItem(idx)}
+                          className="btn-delete-card"
+                          title="Hapus Benefit"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="card-item-fields">
+                      <div className="mb-2">
+                        <label className="mini-label">Judul Benefit</label>
+                        <input
+                          type="text"
+                          value={item.title}
+                          onChange={(e) => handleOtherBenefitsItemChange(idx, "title", e.target.value)}
+                          placeholder="Judul Benefit"
+                          className="form-input form-input-sm"
+                        />
+                      </div>
+
+                      <div className="mb-2">
+                        <label className="mini-label">Deskripsi</label>
+                        <textarea
+                          rows={2}
+                          value={item.desc}
+                          onChange={(e) => handleOtherBenefitsItemChange(idx, "desc", e.target.value)}
+                          placeholder="Deskripsi..."
+                          className="form-textarea form-textarea-sm"
+                        />
+                      </div>
+
+                      <div className="d-flex align-items-center gap-2 mt-1">
+                        <input
+                          type="checkbox"
+                          id={`comingSoon-${idx}`}
+                          checked={!!item.isComingSoon}
+                          onChange={(e) => handleOtherBenefitsItemChange(idx, "isComingSoon", e.target.checked)}
+                          style={{ cursor: "pointer" }}
+                        />
+                        <label htmlFor={`comingSoon-${idx}`} style={{ fontSize: "12px", cursor: "pointer", userSelect: "none", color: "#64748b" }}>
+                          Tandai sebagai <strong>Coming Soon</strong>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* TAB 8: TESTIMONI KARYAWAN                                                 */}
+      {/* ========================================================================= */}
+      {section === "testimonials" && (
+        <div className="cms-editor-card">
+          <div className="editor-card-header">
+            <div>
+              <h3>Modul 8: Testimoni Karyawan</h3>
+              <p>Kelola judul, subjudul, dan 3 ulasan karyawan asli pengguna aplikasi.</p>
+            </div>
+            <span className="badge-live-tag">Terkoneksi ke / (Beranda)</span>
+          </div>
+
+          <div className="form-grid-layout">
+            <div className="form-half-col">
+              <label className="form-label-bold">1. Judul Bagian Testimoni</label>
               <input
                 type="text"
                 value={formData.testimonials.title}
@@ -768,7 +1647,7 @@ export default function HomeManager() {
             </div>
 
             <div className="form-half-col">
-              <label className="form-label-bold">2. Subjudul Bagian</label>
+              <label className="form-label-bold">2. Subjudul Bagian Testimoni</label>
               <input
                 type="text"
                 value={formData.testimonials.subtitle}
@@ -778,32 +1657,34 @@ export default function HomeManager() {
               />
             </div>
 
-            {/* List 3 Testimoni */}
             <div className="form-full-col">
-              <label className="form-label-bold mb-3">3. Daftar Ulasan Testimoni (3 Kartu)</label>
-
+              <label className="form-label-bold mb-3">3. Daftar Kartu Testimoni Karyawan</label>
               <div className="cards-editor-grid">
                 {formData.testimonials.list.map((item, idx) => (
                   <div key={item.id || idx} className="card-editor-item">
                     <div className="card-item-header">
                       <span className="card-idx-badge">TESTIMONI #{idx + 1}</span>
-                      <span className="text-xs text-muted">Bintang 5</span>
+                      <div 
+                        className="color-preview-circle"
+                        style={{ background: item.color || "#0072FF" }}
+                        title="Gradient Warna Avatar"
+                      />
                     </div>
 
                     <div className="card-item-fields">
                       <div className="mb-2">
-                        <label className="mini-label">Nama Pengguna</label>
+                        <label className="mini-label">Nama Karyawan</label>
                         <input
                           type="text"
                           value={item.name}
                           onChange={(e) => handleTestimonialItemChange(idx, "name", e.target.value)}
-                          placeholder="Nama Karyawan"
+                          placeholder="Nama Lengkap"
                           className="form-input form-input-sm"
                         />
                       </div>
 
                       <div className="mb-2">
-                        <label className="mini-label">Nama Perusahaan / Instansi</label>
+                        <label className="mini-label">Perusahaan / Institusi</label>
                         <input
                           type="text"
                           value={item.company}
@@ -813,15 +1694,39 @@ export default function HomeManager() {
                         />
                       </div>
 
-                      <div>
-                        <label className="mini-label">Isi Kutipan Ulasan</label>
+                      <div className="mb-2">
+                        <label className="mini-label">Kutipan Ulasan / Testimoni</label>
                         <textarea
                           rows={3}
                           value={item.quote}
                           onChange={(e) => handleTestimonialItemChange(idx, "quote", e.target.value)}
-                          placeholder="Kutipan ulasan..."
+                          placeholder="Komentar kepuasan..."
                           className="form-textarea form-textarea-sm"
                         />
+                      </div>
+
+                      <div className="d-flex gap-2">
+                        <div className="flex-1">
+                          <label className="mini-label">Inisial Huruf</label>
+                          <input
+                            type="text"
+                            maxLength={2}
+                            value={item.initial}
+                            onChange={(e) => handleTestimonialItemChange(idx, "initial", e.target.value)}
+                            placeholder="A"
+                            className="form-input form-input-sm text-center font-bold"
+                          />
+                        </div>
+                        <div className="flex-2">
+                          <label className="mini-label">Gradient Avatar</label>
+                          <input
+                            type="text"
+                            value={item.color}
+                            onChange={(e) => handleTestimonialItemChange(idx, "color", e.target.value)}
+                            placeholder="linear-gradient(...)"
+                            className="form-input form-input-sm"
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -833,21 +1738,21 @@ export default function HomeManager() {
       )}
 
       {/* ========================================================================= */}
-      {/* TAB 4: BANNER TRIAL (CTA)                                                 */}
+      {/* TAB 9: BANNER TRIAL CTA                                                   */}
       {/* ========================================================================= */}
       {section === "cta" && (
         <div className="cms-editor-card">
           <div className="editor-card-header">
             <div>
-              <h3>Modul 4: Banner Penawaran Trial 30 Hari (CTA)</h3>
-              <p>Kelola headline penawaran trial gratis, teks penjelasan, tombol aksi, dan gambar banner.</p>
+              <h3>Modul 9: Banner Trial Gratis (Call To Action)</h3>
+              <p>Kelola ajakan aksi uji coba gratis 30 hari di bagian bawah halaman.</p>
             </div>
             <span className="badge-live-tag">Terkoneksi ke / (Beranda)</span>
           </div>
 
           <div className="form-grid-layout">
             <div className="form-half-col">
-              <label className="form-label-bold">1. Judul Banner</label>
+              <label className="form-label-bold">1. Judul Banner CTA</label>
               <input
                 type="text"
                 value={formData.cta.title}
@@ -858,51 +1763,27 @@ export default function HomeManager() {
             </div>
 
             <div className="form-half-col">
-              <label className="form-label-bold">2. Teks Tombol Aksi (CTA)</label>
-              <input
-                type="text"
-                value={formData.cta.btnText}
-                onChange={(e) => handleCtaChange("btnText", e.target.value)}
-                placeholder="Hubungi Kami"
-                className="form-input"
-              />
-            </div>
-
-            <div className="form-half-col">
-              <label className="form-label-bold">3. Tujuan Link Tombol</label>
-              <input
-                type="text"
-                value={formData.cta.btnLink}
-                onChange={(e) => handleCtaChange("btnLink", e.target.value)}
-                placeholder="/hubungi-kami atau https://wa.me/62..."
-                className="form-input"
-              />
-            </div>
-
-            <div className="form-half-col">
-              <label className="form-label-bold">4. Gambar Banner CTA</label>
-              <div className="d-flex gap-2 align-center mt-1">
+              <label className="form-label-bold">2. Tombol Aksi (Teks & Link Tujuan)</label>
+              <div className="d-flex gap-2">
                 <input
                   type="text"
-                  value={formData.cta.image}
-                  onChange={(e) => handleCtaChange("image", e.target.value)}
-                  placeholder="URL Gambar (Kosongkan untuk bawaan)"
+                  value={formData.cta.btnText}
+                  onChange={(e) => handleCtaChange("btnText", e.target.value)}
+                  placeholder="Teks Tombol (cth: Hubungi Kami)"
                   className="form-input"
                 />
-                {formData.cta.image && (
-                  <button
-                    type="button"
-                    onClick={() => handleCtaChange("image", "")}
-                    className="btn-remove-photo"
-                  >
-                    Reset
-                  </button>
-                )}
+                <input
+                  type="text"
+                  value={formData.cta.btnLink}
+                  onChange={(e) => handleCtaChange("btnLink", e.target.value)}
+                  placeholder="Link Tujuan (cth: /hubungi-kami)"
+                  className="form-input"
+                />
               </div>
             </div>
 
             <div className="form-full-col">
-              <label className="form-label-bold">5. Penjelasan Penawaran</label>
+              <label className="form-label-bold">3. Paragraf Ajakan & Penjelasan</label>
               <textarea
                 rows={3}
                 value={formData.cta.desc}
@@ -911,24 +1792,217 @@ export default function HomeManager() {
                 className="form-textarea"
               />
             </div>
+
+            <div className="form-full-col">
+              <label className="form-label-bold">4. Gambar Ilustrasi Banner CTA (Sisi Kanan)</label>
+              <div className="cms-image-upload-box">
+                <div className="d-flex align-items-center gap-3">
+                  {formData.cta.image ? (
+                    <img 
+                      src={formData.cta.image} 
+                      alt="CTA Illustration Preview" 
+                      className="cms-img-thumb"
+                      style={{ maxHeight: "80px", maxWidth: "120px", objectFit: "contain" }}
+                    />
+                  ) : (
+                    <div className="cms-img-placeholder">
+                      <ImageIcon size={24} />
+                      <span>Menggunakan SVG Bawaan</span>
+                    </div>
+                  )}
+
+                  <div className="flex-1">
+                    <input
+                      type="text"
+                      value={formData.cta.image}
+                      onChange={(e) => handleCtaChange("image", e.target.value)}
+                      placeholder="URL Gambar Ilustrasi Banner CTA"
+                      className="form-input mb-2"
+                    />
+
+                    <div className="d-flex gap-2">
+                      <label className="btn-upload-file">
+                        <Upload size={14} />
+                        <span>{uploadingCtaImg ? "Mengunggah..." : "Upload File CTA"}</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          style={{ display: "none" }}
+                          disabled={uploadingCtaImg}
+                          onChange={(e) => handleUploadPhoto(
+                            e.target.files[0], 
+                            (url) => handleCtaChange("image", url), 
+                            setUploadingCtaImg
+                          )}
+                        />
+                      </label>
+
+                      {formData.cta.image && (
+                        <button
+                          type="button"
+                          onClick={() => handleCtaChange("image", "")}
+                          className="btn-danger-ghost"
+                          title="Hapus gambar custom dan gunakan bawaan"
+                        >
+                          <Trash2 size={14} />
+                          <span>Gunakan Bawaan</span>
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       )}
 
-      {/* Floating Bottom Bar for Quick Save */}
+      {/* ========================================================================= */}
+      {/* TAB 10: PANDUAN VIDEO INTERAKTIF                                          */}
+      {/* ========================================================================= */}
+      {section === "videoGuide" && (
+        <div className="cms-editor-card">
+          <div className="editor-card-header">
+            <div>
+              <h3>Modul 10: Panduan Video Interaktif</h3>
+              <p>Kelola carousel video panduan YouTube beserta label nama file video.</p>
+            </div>
+            <span className="badge-live-tag">Terkoneksi ke / (Beranda)</span>
+          </div>
+
+          <div className="form-grid-layout">
+            <div className="form-half-col">
+              <label className="form-label-bold">1. Label Badge Atas</label>
+              <input
+                type="text"
+                value={formData.videoGuide.badge}
+                onChange={(e) => handleVideoMainChange("badge", e.target.value)}
+                placeholder="Panduan Interaktif"
+                className="form-input"
+              />
+            </div>
+
+            <div className="form-half-col">
+              <label className="form-label-bold">2. Judul Section</label>
+              <input
+                type="text"
+                value={formData.videoGuide.title}
+                onChange={(e) => handleVideoMainChange("title", e.target.value)}
+                placeholder="Lebih Dekat dengan AyoKasbon"
+                className="form-input"
+              />
+            </div>
+
+            <div className="form-full-col">
+              <label className="form-label-bold">3. Subjudul Section</label>
+              <textarea
+                rows={2}
+                value={formData.videoGuide.subtitle}
+                onChange={(e) => handleVideoMainChange("subtitle", e.target.value)}
+                placeholder="Geser untuk menjelajahi ekosistem..."
+                className="form-textarea"
+              />
+            </div>
+
+            <div className="form-full-col">
+              <div className="d-flex justify-content-between align-items-center mb-3">
+                <label className="form-label-bold mb-0">4. Daftar Video Carousel ({formData.videoGuide.videos.length} Video)</label>
+                <button
+                  type="button"
+                  onClick={handleAddVideo}
+                  className="btn-secondary-action btn-sm"
+                >
+                  <Plus size={14} />
+                  <span>Tambah Video</span>
+                </button>
+              </div>
+
+              <div className="cards-editor-grid">
+                {formData.videoGuide.videos.map((item, idx) => (
+                  <div key={item.id || idx} className="card-editor-item">
+                    <div className="card-item-header">
+                      <span className="card-idx-badge">VIDEO #{idx + 1}</span>
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteVideo(idx)}
+                        className="btn-delete-card"
+                        title="Hapus Video"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+
+                    <div className="card-item-fields">
+                      <div className="mb-2">
+                        <label className="mini-label">Label Nama File (Mac Window)</label>
+                        <input
+                          type="text"
+                          value={item.filename}
+                          onChange={(e) => handleVideoItemChange(idx, "filename", e.target.value)}
+                          placeholder="cth: presentasi-v3.mp4"
+                          className="form-input form-input-sm"
+                        />
+                      </div>
+
+                      <div className="mb-2">
+                        <label className="mini-label">YouTube Video ID</label>
+                        <input
+                          type="text"
+                          value={item.youtubeId}
+                          onChange={(e) => {
+                            let val = e.target.value.trim();
+                            // Jika user mem-paste URL YouTube penuh, ekstrak video ID-nya otomatis!
+                            if (val.includes("v=")) {
+                              val = val.split("v=")[1].split("&")[0];
+                            } else if (val.includes("youtu.be/")) {
+                              val = val.split("youtu.be/")[1].split("?")[0];
+                            } else if (val.includes("embed/")) {
+                              val = val.split("embed/")[1].split("?")[0];
+                            }
+                            handleVideoItemChange(idx, "youtubeId", val);
+                          }}
+                          placeholder="cth: P2UQiwnUT6o atau paste link YouTube"
+                          className="form-input form-input-sm"
+                        />
+                      </div>
+
+                      {item.youtubeId && (
+                        <div style={{ marginTop: "4px" }}>
+                          <a
+                            href={`https://www.youtube.com/watch?v=${item.youtubeId}`}
+                            target="_blank"
+                            rel="noreferrer"
+                            style={{ fontSize: "11.5px", color: "#0284c7", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "4px" }}
+                          >
+                            <PlayCircle size={12} />
+                            <span>Preview Video di YouTube</span>
+                          </a>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Sticky Bottom Bar Save */}
       <div className="cms-bottom-save-bar">
         <div className="save-bar-info">
-          <span>Pastikan untuk menyimpan perubahan setelah mengedit formulir Beranda.</span>
+          <span>Perubahan disimpan langsung ke database Firestore secara aman.</span>
         </div>
-        <div className="d-flex align-center gap-2">
+        <div className="d-flex gap-2">
           <button 
             type="button" 
             onClick={handleResetDefault}
-            className="btn-secondary-action"
+            className="btn-secondary-action btn-sm"
           >
-            <RotateCcw size={15} />
+            <RotateCcw size={14} />
             <span>Reset Bawaan</span>
           </button>
+
           <button
             type="button"
             onClick={handleSave}
@@ -936,7 +2010,7 @@ export default function HomeManager() {
             className="btn-primary-action"
           >
             {saving ? <div className="cms-spinner-sm" /> : <Save size={16} />}
-            <span>{saving ? "Menyimpan..." : "Simpan Perubahan ke Firebase"}</span>
+            <span>{saving ? "Menyimpan..." : "Simpan Perubahan"}</span>
           </button>
         </div>
       </div>

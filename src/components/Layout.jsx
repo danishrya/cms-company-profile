@@ -21,7 +21,14 @@ import {
   Sparkles,
   PhoneCall,
   Image as ImageIcon,
-  MessageSquareQuote
+  MessageSquareQuote,
+  Building2,
+  Award,
+  Monitor,
+  LayoutGrid,
+  HeartHandshake,
+  Gift,
+  Video
 } from "lucide-react";
 
 export default function Layout({ children }) {
@@ -32,7 +39,7 @@ export default function Layout({ children }) {
 
   // State untuk kontrol accordion buka/tutup
   const [openMenus, setOpenMenus] = useState({
-    home: false,
+    home: true,
     about: false,
     articles: true,
     tracking: true,
@@ -73,14 +80,20 @@ export default function Layout({ children }) {
       id: "home",
       title: "Beranda (Home)",
       icon: Home,
-      badge: "Aktif",
+      badge: "10 Section",
       badgeClass: "badge-success",
       rootPath: "/home",
       submenus: [
-        { label: "Hero & Banner", path: "/home/hero", icon: Sparkles },
-        { label: "Card Layanan & Fitur", path: "/home/features", icon: Layers },
-        { label: "Testimoni Karyawan", path: "/home/testimonials", icon: MessageSquareQuote },
-        { label: "Banner Trial (CTA)", path: "/home/cta", icon: Sparkles },
+        { label: "1. Hero Banner", path: "/home/hero", icon: Sparkles },
+        { label: "2. Mitra & Partner", path: "/home/partnership", icon: Building2 },
+        { label: "3. Layanan & Fitur", path: "/home/features", icon: Layers },
+        { label: "4. Kutipan & Visi", path: "/home/quote", icon: MessageSquareQuote },
+        { label: "5. Nilai Lebih", path: "/home/value", icon: Award },
+        { label: "6. Pantau Transaksi", path: "/home/monitor", icon: Monitor },
+        { label: "7. Keuntungan Lain", path: "/home/otherBenefits", icon: LayoutGrid },
+        { label: "8. Testimoni Karyawan", path: "/home/testimonials", icon: HeartHandshake },
+        { label: "9. Banner Trial (CTA)", path: "/home/cta", icon: Gift },
+        { label: "10. Panduan Video", path: "/home/videoGuide", icon: Video },
       ],
     },
     {
@@ -112,20 +125,20 @@ export default function Layout({ children }) {
 
   // Penentuan Judul Topbar & Link Web Live yang Relevan
   let topbarTitle = "Panel Pengelola CMS Ayo Kasbon";
-  let livePreviewUrl = "http://localhost:5173/";
+  let livePreviewUrl = "http://localhost:5175/";
   let livePreviewText = "Lihat Beranda";
 
   if (location.pathname.startsWith("/articles")) {
     topbarTitle = "Pengelola Berita & Artikel";
-    livePreviewUrl = "http://localhost:5173/berita-artikel";
+    livePreviewUrl = "http://localhost:5175/berita-artikel";
     livePreviewText = "Lihat Berita Live";
   } else if (location.pathname.startsWith("/about")) {
     topbarTitle = "Pengelola Halaman Tentang Kami";
-    livePreviewUrl = "http://localhost:5173/tentang-kami";
+    livePreviewUrl = "http://localhost:5175/tentang-kami";
     livePreviewText = "Lihat Tentang Kami";
   } else if (location.pathname.startsWith("/home")) {
     topbarTitle = "Pengelola Halaman Beranda";
-    livePreviewUrl = "http://localhost:5173/";
+    livePreviewUrl = "http://localhost:5175/";
     livePreviewText = "Lihat Beranda Live";
   } else if (location.pathname === "/tracking/pages") {
     topbarTitle = "1. Pelacakan Halaman (Page Tracking)";
@@ -269,6 +282,7 @@ export default function Layout({ children }) {
                       const SubIcon = sub.icon;
                       const isSubActive = 
                         location.pathname === sub.path ||
+                        (sub.path === "/home/hero" && location.pathname === "/home") ||
                         (sub.path === "/articles" && location.pathname.startsWith("/articles/edit/"));
 
                       return (
