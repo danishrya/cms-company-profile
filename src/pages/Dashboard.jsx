@@ -14,6 +14,7 @@ import {
 import { db } from "../firebase";
 import { SEED_ARTICLES } from "../data/seedArticles";
 import { 
+  Activity,
   FileText, 
   PlusCircle, 
   CheckCircle2, 
@@ -169,6 +170,14 @@ export default function Dashboard() {
         </div>
 
         <div className="cms-header-actions">
+          <Link
+            to="/tracking"
+            className="btn-secondary-action"
+            title="Pantau trafik & data pengunjung website"
+          >
+            <Activity size={16} className="text-emerald" />
+            <span>Track Pengunjung</span>
+          </Link>
           <a
             href="http://localhost:5173"
             target="_blank"
@@ -285,7 +294,7 @@ export default function Dashboard() {
             </div>
           </div>
           <div className="module-card-footer">
-            <Link to="/articles" className="btn-module-action">
+            <Link to="/articles" className="btn-module-action primary">
               <span>Kelola Semua Artikel</span>
               <ArrowUpRight size={15} />
             </Link>

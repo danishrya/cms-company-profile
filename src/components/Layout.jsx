@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import logo from "../assets/logo.svg";
 import { 
+  Activity,
   LayoutDashboard, 
   Home,
   Info,
@@ -121,6 +122,8 @@ export default function Layout({ children }) {
     topbarTitle = "Pengelola Halaman Beranda";
     livePreviewUrl = "http://localhost:5173/";
     livePreviewText = "Lihat Beranda Live";
+  } else if (location.pathname === "/tracking") {
+    topbarTitle = "Pelacakan Trafik & Pengunjung Website";
   } else if (location.pathname === "/") {
     topbarTitle = "Dashboard Ringkasan CMS";
   }
@@ -146,6 +149,20 @@ export default function Layout({ children }) {
             <LayoutDashboard size={18} className="nav-item-icon" />
             <span>Dashboard</span>
           </Link>
+
+          {/* Track Pengunjung Item */}
+          <Link
+            to="/tracking"
+            className={`nav-item ${location.pathname === "/tracking" ? "active" : ""}`}
+            onClick={() => setMobileMenuOpen(false)}
+          >
+            <Activity size={18} className="nav-item-icon" />
+            <span>Track Pengunjung</span>
+            <span className="nav-badge-status badge-success" style={{ marginLeft: "auto", fontSize: "10.5px", padding: "2px 7px", fontWeight: 700 }}>
+              Live
+            </span>
+          </Link>
+
 
           <div className="nav-group-title mt-3">KONTEN WEBSITE (PAGES)</div>
 

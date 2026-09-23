@@ -9,6 +9,7 @@ import ArticlesList from "./pages/ArticlesList";
 import ArticleEditor from "./pages/ArticleEditor";
 import AboutManager from "./pages/AboutManager";
 import HomeManager from "./pages/HomeManager";
+import UserTracking from "./pages/UserTracking";
 import "./App.css";
 
 export default function App() {
@@ -110,6 +111,17 @@ export default function App() {
           }
         />
 
+        {/* 4. Pelacakan Pengunjung & Trafik (User Tracking) */}
+        <Route
+          path="/tracking"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <UserTracking />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
         {/* Catch all fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
