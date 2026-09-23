@@ -1,4 +1,5 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
+import { Link, useLocation, useParams } from "react-router-dom";
 import { 
   FileText, 
   Layers, 
@@ -22,11 +23,13 @@ import {
   ExternalLink,
   ChevronRight,
   Filter,
-  Info
+  Info,
+  Globe,
+  Share2
 } from "lucide-react";
 
 // =========================================================================
-// DATA AWAL / BASELINE UNTUK 3 PILAR PELACAKAN
+// DATA AWAL (BASELINE BENCHMARK) UNTUK 3 PILAR PELACAKAN
 // =========================================================================
 
 // 1. Data Track Halaman
@@ -40,6 +43,8 @@ const BASE_PAGES_DATA = [
     avgDuration: "3m 15s",
     bounceRate: "28.4%",
     share: 45,
+    topDevice: "Mobile (68%)",
+    topSource: "Google Search (48%)",
     liveUrl: "http://localhost:5173/"
   },
   {
@@ -51,6 +56,8 @@ const BASE_PAGES_DATA = [
     avgDuration: "2m 40s",
     bounceRate: "32.1%",
     share: 25,
+    topDevice: "Desktop (52%)",
+    topSource: "Direct (42%)",
     liveUrl: "http://localhost:5173/tentang-kami"
   },
   {
@@ -62,6 +69,8 @@ const BASE_PAGES_DATA = [
     avgDuration: "4m 10s",
     bounceRate: "24.5%",
     share: 17,
+    topDevice: "Mobile (74%)",
+    topSource: "Media Sosial (38%)",
     liveUrl: "http://localhost:5173/berita-artikel"
   },
   {
@@ -73,22 +82,26 @@ const BASE_PAGES_DATA = [
     avgDuration: "1m 50s",
     bounceRate: "18.2%",
     share: 9,
+    topDevice: "Mobile (62%)",
+    topSource: "Google & WA (55%)",
     liveUrl: "http://localhost:5173/hubungi-kami"
   },
   {
     id: "page_art_detail",
-    name: "Artikel: Keuntungan Kasbon Karyawan",
+    name: "Artikel: Keuntungan Kasbon Karyawan & Efisiensi HR",
     path: "/berita-artikel/keuntungan-kasbon-karyawan-efisiensi-perusahaan",
     views: 130,
     uniqueVisitors: 95,
     avgDuration: "4m 45s",
     bounceRate: "20.0%",
     share: 4,
+    topDevice: "Mobile (80%)",
+    topSource: "LinkedIn Share (60%)",
     liveUrl: "http://localhost:5173/berita-artikel"
   }
 ];
 
-// 2. Data Track Section (Kedalaman Scroll per Halaman)
+// 2. Data Track Section (Scroll Depth 0% - 100%)
 const BASE_SECTIONS_DATA = {
   "/": {
     pageName: "Beranda Utama (Home)",
@@ -97,21 +110,23 @@ const BASE_SECTIONS_DATA = {
     sections: [
       {
         id: "sec_hero",
-        name: "Navbar & Hero Banner",
+        name: "Navbar & Hero Banner Utama",
         positionPct: "0% - 20%",
         threshold: 0,
         reachedCount: 1420,
         reachedPct: 100,
+        dropOffRate: "14%",
         description: "Bagian paling atas website, terlihat saat pertama kali dimuat",
-        status: "Semua Terpapar"
+        status: "100% Terpapar"
       },
       {
         id: "sec_features",
-        name: "Section Fitur & Keunggulan Layanan",
+        name: "Section Fitur & Keunggulan Layanan Kasbon",
         positionPct: "~35%",
         threshold: 30,
         reachedCount: 1220,
         reachedPct: 86,
+        dropOffRate: "19%",
         description: "User scroll minimal 30% untuk melihat kartu fitur kasbon digital",
         status: "Sangat Populer"
       },
@@ -122,6 +137,7 @@ const BASE_SECTIONS_DATA = {
         threshold: 60,
         reachedCount: 950,
         reachedPct: 67,
+        dropOffRate: "17%",
         description: "User scroll hingga 60% untuk membaca bukti kepuasan pelanggan",
         status: "Optimal"
       },
@@ -132,16 +148,18 @@ const BASE_SECTIONS_DATA = {
         threshold: 80,
         reachedCount: 710,
         reachedPct: 50,
+        dropOffRate: "16%",
         description: "User scroll 80% ke bawah mendekati akhir halaman",
         status: "Konversi Tinggi"
       },
       {
         id: "sec_footer",
-        name: "Footer & Regulasi Resmi (BI / Komdigi)",
+        name: "Footer Navigasi & Regulasi Resmi (BI / Komdigi)",
         positionPct: "100%",
         threshold: 95,
         reachedCount: 480,
         reachedPct: 34,
+        dropOffRate: "-",
         description: "User membaca sampai tuntas ke paling bawah halaman",
         status: "Tuntas Dibaca"
       }
@@ -159,8 +177,9 @@ const BASE_SECTIONS_DATA = {
         threshold: 0,
         reachedCount: 780,
         reachedPct: 100,
+        dropOffRate: "16%",
         description: "Header profil dan ringkasan visi Ayo Kasbon",
-        status: "Semua Terpapar"
+        status: "100% Terpapar"
       },
       {
         id: "sec_about_history",
@@ -169,6 +188,7 @@ const BASE_SECTIONS_DATA = {
         threshold: 35,
         reachedCount: 655,
         reachedPct: 84,
+        dropOffRate: "21%",
         description: "Bagian cerita pendiri dan foto dokumentasi kantor",
         status: "Sangat Populer"
       },
@@ -179,6 +199,7 @@ const BASE_SECTIONS_DATA = {
         threshold: 65,
         reachedCount: 490,
         reachedPct: 63,
+        dropOffRate: "13%",
         description: "Penjelasan detail kenapa perusahaan memilih Ayo Kasbon",
         status: "Optimal"
       },
@@ -189,17 +210,19 @@ const BASE_SECTIONS_DATA = {
         threshold: 85,
         reachedCount: 390,
         reachedPct: 50,
-        description: "Kontak langsung ke layanan pelanggan",
+        dropOffRate: "17%",
+        description: "Penawaran konsultasi langsung ke customer service",
         status: "Konversi Tinggi"
       },
       {
         id: "sec_about_footer",
-        name: "Footer Navigasi & Hak Cipta",
+        name: "Footer Navigasi & Kontak Legal",
         positionPct: "100%",
         threshold: 95,
         reachedCount: 260,
         reachedPct: 33,
-        description: "Akhir halaman Tentang Kami",
+        dropOffRate: "-",
+        description: "Bagian paling bawah halaman Tentang Kami",
         status: "Tuntas Dibaca"
       }
     ]
@@ -216,8 +239,9 @@ const BASE_SECTIONS_DATA = {
         threshold: 0,
         reachedCount: 520,
         reachedPct: 100,
+        dropOffRate: "17%",
         description: "Pilihan kategori artikel finansial dan pencarian",
-        status: "Semua Terpapar"
+        status: "100% Terpapar"
       },
       {
         id: "sec_news_featured",
@@ -226,7 +250,8 @@ const BASE_SECTIONS_DATA = {
         threshold: 40,
         reachedCount: 430,
         reachedPct: 83,
-        description: "Highlight artikel edukasi paling penting",
+        dropOffRate: "21%",
+        description: "Highlight artikel edukasi paling populer",
         status: "Sangat Populer"
       },
       {
@@ -236,7 +261,8 @@ const BASE_SECTIONS_DATA = {
         threshold: 70,
         reachedCount: 320,
         reachedPct: 62,
-        description: "Katalog lengkap kartu berita",
+        dropOffRate: "25%",
+        description: "Katalog lengkap kartu artikel kasbon",
         status: "Optimal"
       },
       {
@@ -246,19 +272,20 @@ const BASE_SECTIONS_DATA = {
         threshold: 95,
         reachedCount: 190,
         reachedPct: 37,
-        description: "Bagian paling bawah halaman artikel",
+        dropOffRate: "-",
+        description: "Bagian paling bawah halaman berita",
         status: "Tuntas Dibaca"
       }
     ]
   }
 };
 
-// 3. Data Track Button & Interaksi CTA
+// 3. Data Track Button (Click Events & CTA Conversion)
 const BASE_BUTTONS_DATA = [
   {
     id: "btn_hero_trial",
     name: "Coba Sekarang / Daftar",
-    pageLocation: "Beranda - Hero Banner",
+    pageLocation: "Beranda - Hero Banner Atas",
     actionType: "Link ke /hubungi-kami",
     totalClicks: 284,
     uniqueClickers: 242,
@@ -269,8 +296,8 @@ const BASE_BUTTONS_DATA = [
   {
     id: "btn_cs_whatsapp",
     name: "Konsultasi WhatsApp CS",
-    pageLocation: "Tentang Kami & Floating WA",
-    actionType: "Buka Chat WhatsApp",
+    pageLocation: "Tentang Kami & Floating Button WA",
+    actionType: "Buka Chat WhatsApp Resmi",
     totalClicks: 192,
     uniqueClickers: 175,
     ctr: "24.6%",
@@ -279,8 +306,8 @@ const BASE_BUTTONS_DATA = [
   },
   {
     id: "btn_header_contact",
-    name: "Hubungi Kami (Navbar)",
-    pageLocation: "Semua Halaman - Header Atas",
+    name: "Hubungi Kami (Navbar Atas)",
+    pageLocation: "Semua Halaman - Header Sticky",
     actionType: "Navigasi Kontak",
     totalClicks: 145,
     uniqueClickers: 120,
@@ -291,7 +318,7 @@ const BASE_BUTTONS_DATA = [
   {
     id: "btn_cta_demo",
     name: "Ajukan Demo Perusahaan",
-    pageLocation: "Beranda - Section Bawah",
+    pageLocation: "Beranda - Section Bawah (Trial)",
     actionType: "Buka Form Demo",
     totalClicks: 118,
     uniqueClickers: 104,
@@ -303,7 +330,7 @@ const BASE_BUTTONS_DATA = [
     id: "btn_read_more_article",
     name: "Baca Artikel Selengkapnya",
     pageLocation: "Berita & Edukasi - Card Post",
-    actionType: "Buka Halaman Detail",
+    actionType: "Buka Halaman Detail Artikel",
     totalClicks: 88,
     uniqueClickers: 72,
     ctr: "16.9%",
@@ -313,13 +340,22 @@ const BASE_BUTTONS_DATA = [
 ];
 
 export default function UserTracking() {
-  const [activeTab, setActiveTab] = useState("pages"); // "pages", "sections", "buttons"
+  const location = useLocation();
+  const { submenu } = useParams();
+
+  // Tentukan mode aktif berdasarkan URL: overview, pages, sections, buttons
+  const activeMode = useMemo(() => {
+    if (submenu === "pages" || location.pathname === "/tracking/pages") return "pages";
+    if (submenu === "sections" || location.pathname === "/tracking/sections") return "sections";
+    if (submenu === "buttons" || location.pathname === "/tracking/buttons") return "buttons";
+    return "overview";
+  }, [submenu, location.pathname]);
+
   const [timeRange, setTimeRange] = useState("7d");
   const [selectedSectionPage, setSelectedSectionPage] = useState("/");
   const [searchQuery, setSearchQuery] = useState("");
   const [toastMessage, setToastMessage] = useState("");
 
-  // Multiplier berdasarkan filter waktu
   const multiplier = useMemo(() => {
     if (timeRange === "today") return 0.25;
     if (timeRange === "7d") return 1.0;
@@ -332,16 +368,13 @@ export default function UserTracking() {
     setTimeout(() => setToastMessage(""), 4000);
   };
 
-  // Hitung Metrik Ringkasan (Top 3 KPI Cards)
   const summary = useMemo(() => {
     const totalViews = Math.round(3140 * multiplier);
     const totalClicks = Math.round(827 * multiplier);
     const avgScroll = "69.8%";
-
     return { totalViews, totalClicks, avgScroll };
   }, [multiplier]);
 
-  // Data Halaman yang disesuaikan dengan multiplier
   const pagesList = useMemo(() => {
     return BASE_PAGES_DATA.map((p) => ({
       ...p,
@@ -354,7 +387,6 @@ export default function UserTracking() {
     );
   }, [multiplier, searchQuery]);
 
-  // Data Section untuk halaman terpilih
   const currentSectionData = useMemo(() => {
     const data = BASE_SECTIONS_DATA[selectedSectionPage] || BASE_SECTIONS_DATA["/"];
     return {
@@ -367,7 +399,6 @@ export default function UserTracking() {
     };
   }, [selectedSectionPage, multiplier]);
 
-  // Data Tombol yang disesuaikan dengan multiplier
   const buttonsList = useMemo(() => {
     return BASE_BUTTONS_DATA.map((b) => ({
       ...b,
@@ -380,57 +411,40 @@ export default function UserTracking() {
     );
   }, [multiplier, searchQuery]);
 
-  // Simulasi Event Interaktif
+  // Simulasi Event
   const handleSimulateEvent = (type) => {
     if (type === "page") {
-      showToast("🚀 Simulasi: +1 Kunjungan Halaman Beranda tercatat secara realtime!");
+      showToast("🚀 Simulasi: Kunjungan halaman baru berhasil ditambahkan!");
     } else if (type === "scroll") {
-      showToast("📜 Simulasi: Pengunjung melakukan scroll hingga 85% (Mencapai Section CTA Trial)!");
+      showToast("📜 Simulasi: Pengunjung melakukan scroll hingga 85% (Section CTA Demo tercapai)!");
     } else if (type === "button") {
-      showToast("🔘 Simulasi: Tombol 'Coba Sekarang' diklik oleh pengguna (Event Clicks +1)!");
+      showToast("🔘 Simulasi: Tombol 'Coba Sekarang / Daftar' berhasil diklik (+1 Click Event)!");
     }
   };
 
-  // Export CSV sesuai tab aktif
+  // Export CSV
   const handleExportCSV = () => {
     let filename = "ayo_kasbon_";
     let rows = [];
     let headers = [];
 
-    if (activeTab === "pages") {
+    if (activeMode === "pages") {
       filename += "track_halaman.csv";
-      headers = ["Halaman", "Path", "Total_Views", "Unique_Visitors", "Rata_Rata_Waktu", "Bounce_Rate", "Share_Persen"];
+      headers = ["Halaman", "Path", "Views", "Unique_Users", "Rata_Waktu", "Bounce_Rate", "Porsi_Trafik", "Perangkat_Utama"];
       rows = pagesList.map((p) => [
-        `"${p.name}"`,
-        p.path,
-        p.views,
-        p.uniqueVisitors,
-        p.avgDuration,
-        p.bounceRate,
-        p.share + "%"
+        `"${p.name}"`, p.path, p.views, p.uniqueVisitors, p.avgDuration, p.bounceRate, p.share + "%", p.topDevice
       ]);
-    } else if (activeTab === "sections") {
+    } else if (activeMode === "sections") {
       filename += "track_section_scroll.csv";
-      headers = ["Halaman", "Section", "Posisi_Scroll", "User_Mencapai_Count", "User_Mencapai_Pct", "Status"];
+      headers = ["Halaman", "Section", "Posisi_Scroll", "User_Mencapai_Count", "User_Mencapai_Pct", "Drop_Off", "Status"];
       rows = currentSectionData.sections.map((s) => [
-        `"${currentSectionData.pageName}"`,
-        `"${s.name}"`,
-        s.positionPct,
-        s.reachedCount,
-        s.reachedPct + "%",
-        s.status
+        `"${currentSectionData.pageName}"`, `"${s.name}"`, s.positionPct, s.reachedCount, s.reachedPct + "%", s.dropOffRate, s.status
       ]);
     } else {
       filename += "track_button_clicks.csv";
-      headers = ["Nama_Tombol", "Lokasi_Halaman", "Tipe_Aksi", "Total_Clicks", "Unique_Clickers", "CTR_Pct", "Performa"];
+      headers = ["Nama_Tombol", "Lokasi", "Aksi", "Total_Klik", "Unique_Clickers", "CTR", "Performa"];
       rows = buttonsList.map((b) => [
-        `"${b.name}"`,
-        `"${b.pageLocation}"`,
-        `"${b.actionType}"`,
-        b.totalClicks,
-        b.uniqueClickers,
-        b.ctr,
-        b.performance
+        `"${b.name}"`, `"${b.pageLocation}"`, `"${b.actionType}"`, b.totalClicks, b.uniqueClickers, b.ctr, b.performance
       ]);
     }
 
@@ -442,7 +456,7 @@ export default function UserTracking() {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    showToast(`📥 Berhasil mengunduh laporan ${filename}!`);
+    showToast(`📥 Laporan ${filename} berhasil didownload!`);
   };
 
   return (
@@ -457,38 +471,43 @@ export default function UserTracking() {
       {/* Top Header */}
       <div className="cms-page-header">
         <div>
-          <h1 className="cms-page-title">Pelacakan Trafik & Interaksi Pengunjung</h1>
+          <h1 className="cms-page-title">
+            {activeMode === "pages" && "1. Pelacakan Halaman (Page Tracking)"}
+            {activeMode === "sections" && "2. Pelacakan Section & Scroll Depth"}
+            {activeMode === "buttons" && "3. Pelacakan Klik Tombol (Button Tracking)"}
+            {activeMode === "overview" && "Ringkasan Pelacakan Pengunjung & Trafik"}
+          </h1>
           <p className="cms-page-subtitle">
-            Sistem analitik terpadu 3 pilar: pantau frekuensi akses halaman, kedalaman scroll tiap section (0% - 100%), dan efektivitas klik tombol CTA.
+            {activeMode === "pages" && "Detail lengkap jumlah tayangan, durasi baca, pengunjung unik, dan rasio pentalan di setiap URL halaman."}
+            {activeMode === "sections" && "Analisis jangkauan scroll pengguna dari 0% (Hero atas) hingga 100% (Footer) dengan logika ambang batas threshold."}
+            {activeMode === "buttons" && "Mendeteksi setiap klik pada tombol WhatsApp, ajukan demo, pendaftaran kasbon, dan tombol aksi lainnya."}
+            {activeMode === "overview" && "Pantau 3 pilar analitik terpadu: akses halaman, kedalaman scroll tiap section (0% - 100%), dan klik tombol CTA."}
           </p>
         </div>
 
         <div className="cms-header-actions">
-          {/* Dropdown Menu Simulasi */}
-          <div className="dropdown-simulasi-box">
-            <button
-              onClick={() => handleSimulateEvent(activeTab === "buttons" ? "button" : activeTab === "sections" ? "scroll" : "page")}
-              className="btn-secondary-action"
-              title="Kirim simulasi interaksi sesuai tab yang aktif"
-            >
-              <Sparkles size={16} className="text-amber" />
-              <span>+ Simulasi {activeTab === "buttons" ? "Klik Tombol" : activeTab === "sections" ? "Scroll Section" : "Kunjungan Halaman"}</span>
-            </button>
-          </div>
+          <button
+            onClick={() => handleSimulateEvent(activeMode === "buttons" ? "button" : activeMode === "sections" ? "scroll" : "page")}
+            className="btn-secondary-action"
+            title="Kirim simulasi data interaksi"
+          >
+            <Sparkles size={16} className="text-amber" />
+            <span>+ Simulasi {activeMode === "buttons" ? "Klik Tombol" : activeMode === "sections" ? "Scroll Section" : "Kunjungan"}</span>
+          </button>
 
           <button
             onClick={handleExportCSV}
             className="btn-secondary-action"
-            title="Download data tabel yang aktif ke CSV"
+            title="Download laporan tabel ke CSV"
           >
             <Download size={16} />
             <span>Export CSV</span>
           </button>
 
           <button
-            onClick={() => showToast("🔄 Data analitik berhasil disinkronkan ulang!")}
+            onClick={() => showToast("🔄 Data analitik berhasil disegarkan!")}
             className="btn-primary-action"
-            title="Sinkronisasi ulang data"
+            title="Refresh data analitik"
           >
             <RefreshCw size={16} />
             <span>Refresh Data</span>
@@ -497,85 +516,91 @@ export default function UserTracking() {
       </div>
 
       {/* ========================================================================= */}
-      {/* 3 RINGKASAN METRIK PILAR (OVERVIEW STATS CARDS)                          */}
+      {/* 3 RINGKASAN METRIK PILAR SEKALIGUS NAVIGASI CEPAT                         */}
       {/* ========================================================================= */}
       <div className="analytics-pillar-cards mb-4">
         {/* Pilar 1: Track Halaman */}
-        <div 
-          onClick={() => setActiveTab("pages")}
-          className={`pillar-card ${activeTab === "pages" ? "active-pillar" : ""}`}
+        <Link 
+          to="/tracking/pages"
+          className={`pillar-card ${activeMode === "pages" ? "active-pillar" : ""}`}
         >
           <div className="pillar-card-top">
             <div className="pillar-icon-box blue">
               <FileText size={20} />
             </div>
-            <span className="pillar-badge">Pilar 1</span>
+            <span className="pillar-badge">Submenu 1</span>
           </div>
           <span className="pillar-label">1. Track Halaman</span>
           <div className="pillar-value">{summary.totalViews.toLocaleString("id-ID")} <span className="pillar-unit">Views</span></div>
           <p className="pillar-desc">Frekuensi akses pengunjung ke setiap URL halaman</p>
-        </div>
+        </Link>
 
         {/* Pilar 2: Track Section */}
-        <div 
-          onClick={() => setActiveTab("sections")}
-          className={`pillar-card ${activeTab === "sections" ? "active-pillar" : ""}`}
+        <Link 
+          to="/tracking/sections"
+          className={`pillar-card ${activeMode === "sections" ? "active-pillar" : ""}`}
         >
           <div className="pillar-card-top">
             <div className="pillar-icon-box purple">
               <ArrowDown size={20} />
             </div>
-            <span className="pillar-badge">Pilar 2</span>
+            <span className="pillar-badge">Submenu 2</span>
           </div>
-          <span className="pillar-label">2. Track Section (Scroll Depth)</span>
-          <div className="pillar-value">{summary.avgScroll} <span className="pillar-unit">Rata-rata</span></div>
+          <span className="pillar-label">2. Track Section (Scroll)</span>
+          <div className="pillar-value">{summary.avgScroll} <span className="pillar-unit">Kedalaman</span></div>
           <p className="pillar-desc">Deteksi scroll user dari Hero (0%) sampai Footer (100%)</p>
-        </div>
+        </Link>
 
         {/* Pilar 3: Track Button */}
-        <div 
-          onClick={() => setActiveTab("buttons")}
-          className={`pillar-card ${activeTab === "buttons" ? "active-pillar" : ""}`}
+        <Link 
+          to="/tracking/buttons"
+          className={`pillar-card ${activeMode === "buttons" ? "active-pillar" : ""}`}
         >
           <div className="pillar-card-top">
             <div className="pillar-icon-box green">
               <MousePointerClick size={20} />
             </div>
-            <span className="pillar-badge">Pilar 3</span>
+            <span className="pillar-badge">Submenu 3</span>
           </div>
-          <span className="pillar-label">3. Track Button (Klik CTA)</span>
+          <span className="pillar-label">3. Track Button (Klik)</span>
           <div className="pillar-value">{summary.totalClicks.toLocaleString("id-ID")} <span className="pillar-unit">Klik</span></div>
           <p className="pillar-desc">Jumlah interaksi klik tombol WhatsApp & pendaftaran</p>
-        </div>
+        </Link>
       </div>
 
       {/* ========================================================================= */}
-      {/* FILTER & TAB BAR                                                         */}
+      {/* FILTER PERIODE WAKTU & BREADCRUMB SUBMENU                                 */}
       {/* ========================================================================= */}
       <div className="analytics-filter-bar mb-4">
-        {/* Navigation Tabs 3 Pilar */}
         <div className="analytics-main-tabs">
-          <button
-            onClick={() => setActiveTab("pages")}
-            className={`analytics-tab-btn ${activeTab === "pages" ? "active" : ""}`}
+          <Link
+            to="/tracking"
+            className={`analytics-tab-btn ${activeMode === "overview" ? "active" : ""}`}
           >
-            <FileText size={16} />
+            <BarChart3 size={15} />
+            <span>Ringkasan</span>
+          </Link>
+          <Link
+            to="/tracking/pages"
+            className={`analytics-tab-btn ${activeMode === "pages" ? "active" : ""}`}
+          >
+            <FileText size={15} />
             <span>Track Halaman</span>
-          </button>
-          <button
-            onClick={() => setActiveTab("sections")}
-            className={`analytics-tab-btn ${activeTab === "sections" ? "active" : ""}`}
+          </Link>
+          <Link
+            to="/tracking/sections"
+            className={`analytics-tab-btn ${activeMode === "sections" ? "active" : ""}`}
           >
-            <Layers size={16} />
+            <Layers size={15} />
             <span>Track Section (Scroll)</span>
-          </button>
-          <button
-            onClick={() => setActiveTab("buttons")}
-            className={`analytics-tab-btn ${activeTab === "buttons" ? "active" : ""}`}
+          </Link>
+          <Link
+            to="/tracking/buttons"
+            className={`analytics-tab-btn ${activeMode === "buttons" ? "active" : ""}`}
           >
-            <MousePointerClick size={16} />
+            <MousePointerClick size={15} />
             <span>Track Button (Klik)</span>
-          </button>
+          </Link>
         </div>
 
         {/* Periode Filter */}
@@ -608,23 +633,25 @@ export default function UserTracking() {
       </div>
 
       {/* ========================================================================= */}
-      {/* TAB 1: TRACK HALAMAN                                                     */}
+      {/* SUBMENU 1: TRACK HALAMAN (PAGE TRACKING)                                  */}
       {/* ========================================================================= */}
-      {activeTab === "pages" && (
-        <div className="tab-content-area">
-          <div className="dashboard-section-card mb-4">
+      {(activeMode === "pages" || activeMode === "overview") && (
+        <div className="tab-content-area mb-4">
+          <div className="dashboard-section-card">
             <div className="section-card-header">
               <div>
-                <h3 className="section-title">Daftar Kunjungan Halaman Website</h3>
+                <h3 className="section-title">
+                  {activeMode === "overview" ? "Ringkasan Kunjungan Halaman Website" : "1. Detail Pelacakan Halaman (Page Tracking)"}
+                </h3>
                 <p className="section-subtitle">
-                  Mendeteksi jumlah pengunjung yang membuka dan berinteraksi di setiap URL halaman website
+                  Menghitung berapa banyak user yang mengakses masing-masing halaman website
                 </p>
               </div>
               <div className="analytics-search-box">
                 <Search size={15} className="search-icon" />
                 <input
                   type="text"
-                  placeholder="Cari nama halaman atau path..."
+                  placeholder="Cari halaman atau path..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="analytics-search-input"
@@ -638,10 +665,11 @@ export default function UserTracking() {
                   <tr>
                     <th>Halaman Website</th>
                     <th>Path URL</th>
-                    <th>Total Tayangan (Views)</th>
+                    <th>Total Views</th>
                     <th>Pengunjung Unik</th>
                     <th>Rata-rata Waktu</th>
-                    <th>Bounce Rate</th>
+                    <th>Perangkat Dominan</th>
+                    <th>Sumber Utama</th>
                     <th>Porsi Trafik</th>
                     <th>Aksi</th>
                   </tr>
@@ -671,10 +699,13 @@ export default function UserTracking() {
                         </div>
                       </td>
                       <td>
-                        <span className="text-sm font-medium">{p.bounceRate}</span>
+                        <span className="badge-tag-browser">{p.topDevice}</span>
                       </td>
                       <td>
-                        <div className="d-flex align-center gap-2" style={{ minWidth: "110px" }}>
+                        <span className="text-sm text-secondary">{p.topSource}</span>
+                      </td>
+                      <td>
+                        <div className="d-flex align-center gap-2" style={{ minWidth: "100px" }}>
                           <div className="page-progress-track flex-1">
                             <div className="page-progress-fill" style={{ width: `${p.share}%` }} />
                           </div>
@@ -687,10 +718,10 @@ export default function UserTracking() {
                           target="_blank" 
                           rel="noreferrer"
                           className="btn-link-action"
-                          title="Buka halaman live di browser"
+                          title="Buka halaman live di tab baru"
                         >
                           <span>Buka</span>
-                          <ExternalLink size={13} />
+                          <ExternalLink size={12} />
                         </a>
                       </td>
                     </tr>
@@ -703,28 +734,28 @@ export default function UserTracking() {
       )}
 
       {/* ========================================================================= */}
-      {/* TAB 2: TRACK SECTION (SCROLL DEPTH FUNNEL)                                */}
+      {/* SUBMENU 2: TRACK SECTION (SCROLL DEPTH FUNNEL)                             */}
       {/* ========================================================================= */}
-      {activeTab === "sections" && (
-        <div className="tab-content-area">
-          {/* Info Box Logika Scroll */}
+      {(activeMode === "sections" || activeMode === "overview") && (
+        <div className="tab-content-area mb-4">
+          {/* Penjelasan Logika Scroll Sesuai Request User */}
           <div className="scroll-logic-info-card mb-4">
             <div className="logic-icon-wrap">
               <Info size={22} className="text-blue" />
             </div>
             <div className="logic-text-content">
-              <h4 className="logic-title">Bagaimana Logika Perhitungan Scroll Section Bekerja?</h4>
+              <h4 className="logic-title">Perhitungan Scroll Depth Section: 0% (Hero/Navbar) s/d 100% (Footer)</h4>
               <p className="logic-desc">
-                Sistem membaca posisi scroll user dari <strong>0% (Navbar/Hero di bagian paling atas)</strong> sampai <strong>100% (Footer di bagian paling bawah)</strong>.
-                Jika suatu section berada di posisi <strong>30%</strong>, dan user hanya scroll sampai <strong>20%</strong>, maka section tersebut <strong>belum terhitung terlihat</strong>.
-                Section baru terhitung ketika user benar-benar scroll melewati posisi ambang batas section tersebut.
+                Sistem mendeteksi scroll user secara realtime. Contoh: jika <strong>Section Keunggulan</strong> berada di posisi <strong>30%</strong>,
+                dan user hanya scroll sampai <strong>20%</strong>, maka section tersebut <strong>belum terhitung</strong>.
+                Section baru terhitung ketika user scroll mencapai atau melampaui posisi section tersebut.
               </p>
             </div>
           </div>
 
-          {/* Selector Halaman */}
+          {/* Selector Halaman untuk Analisis Scroll */}
           <div className="section-page-selector-bar mb-4">
-            <span className="selector-label">Pilih Halaman yang Dianalisis:</span>
+            <span className="selector-label">Pilih Halaman untuk Dianalisis:</span>
             <div className="selector-buttons">
               <button
                 onClick={() => setSelectedSectionPage("/")}
@@ -746,80 +777,79 @@ export default function UserTracking() {
               </button>
             </div>
             <div className="selector-stat ml-auto">
-              <span>Rata-rata Scroll Depth: <strong>{currentSectionData.avgScrollDepth}</strong></span>
+              <span>Rata-rata Scroll Pengunjung: <strong>{currentSectionData.avgScrollDepth}</strong></span>
             </div>
           </div>
 
           {/* Funnel Visualisasi Scroll per Section */}
-          <div className="dashboard-section-card mb-4">
+          <div className="dashboard-section-card">
             <div className="section-card-header">
               <div>
-                <h3 className="section-title">Funnel Kedalaman Scroll: {currentSectionData.pageName}</h3>
+                <h3 className="section-title">Funnel Scroll Section: {currentSectionData.pageName}</h3>
                 <p className="section-subtitle">
-                  Persentase pengunjung yang berhasil scroll dan melihat setiap section dari total {currentSectionData.totalVisits.toLocaleString("id-ID")} kunjungan
+                  Persentase pengunjung yang berhasil mencapai tiap section dari total {currentSectionData.totalVisits.toLocaleString("id-ID")} kunjungan
                 </p>
               </div>
-              <div className="badge-module-status active-green">Perhitungan Akurat 0% - 100%</div>
+              <div className="badge-module-status active-green">Ambang Batas Terkalibrasi</div>
             </div>
 
             <div className="scroll-funnel-list">
-              {currentSectionData.sections.map((sec, idx) => {
-                const isFirst = idx === 0;
-                const isLast = idx === currentSectionData.sections.length - 1;
-                return (
-                  <div key={sec.id} className="funnel-step-card">
-                    <div className="funnel-step-left">
-                      <div className="funnel-step-num-col">
-                        <span className="step-num-badge">#{idx + 1}</span>
-                        <span className="step-pos-pct">{sec.positionPct}</span>
-                      </div>
-                      <div className="funnel-step-details">
-                        <div className="d-flex align-center gap-2">
-                          <h4 className="step-title">{sec.name}</h4>
-                          <span className="badge-step-status">{sec.status}</span>
-                        </div>
-                        <p className="step-desc">{sec.description}</p>
-                      </div>
+              {currentSectionData.sections.map((sec, idx) => (
+                <div key={sec.id} className="funnel-step-card">
+                  <div className="funnel-step-left">
+                    <div className="funnel-step-num-col">
+                      <span className="step-num-badge">#{idx + 1}</span>
+                      <span className="step-pos-pct">{sec.positionPct}</span>
                     </div>
-
-                    <div className="funnel-step-right">
-                      <div className="funnel-metric-box">
-                        <div className="metric-pct">{sec.reachedPct}%</div>
-                        <div className="metric-count">{sec.reachedCount.toLocaleString("id-ID")} pengunjung</div>
+                    <div className="funnel-step-details">
+                      <div className="d-flex align-center gap-2">
+                        <h4 className="step-title">{sec.name}</h4>
+                        <span className="badge-step-status">{sec.status}</span>
                       </div>
-                      <div className="funnel-progress-container">
-                        <div 
-                          className={`funnel-progress-bar ${sec.reachedPct > 80 ? "high" : sec.reachedPct > 50 ? "medium" : "low"}`}
-                          style={{ width: `${sec.reachedPct}%` }}
-                        />
-                      </div>
+                      <p className="step-desc">{sec.description}</p>
                     </div>
                   </div>
-                );
-              })}
+
+                  <div className="funnel-step-right">
+                    <div className="funnel-metric-box">
+                      <div className="metric-pct">{sec.reachedPct}%</div>
+                      <div className="metric-count">{sec.reachedCount.toLocaleString("id-ID")} pengunjung</div>
+                    </div>
+                    <div className="funnel-progress-container">
+                      <div 
+                        className={`funnel-progress-bar ${sec.reachedPct > 80 ? "high" : sec.reachedPct > 50 ? "medium" : "low"}`}
+                        style={{ width: `${sec.reachedPct}%` }}
+                      />
+                    </div>
+                    <span className="text-xs text-muted">Drop-off: {sec.dropOffRate}</span>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
       )}
 
       {/* ========================================================================= */}
-      {/* TAB 3: TRACK BUTTON (CLICK EVENTS & CTA CONVERSION)                      */}
+      {/* SUBMENU 3: TRACK BUTTON (CLICK EVENTS & CTA)                              */}
       {/* ========================================================================= */}
-      {activeTab === "buttons" && (
-        <div className="tab-content-area">
-          <div className="dashboard-section-card mb-4">
+      {(activeMode === "buttons" || activeMode === "overview") && (
+        <div className="tab-content-area mb-4">
+          <div className="dashboard-section-card">
             <div className="section-card-header">
               <div>
-                <h3 className="section-title">Pelacakan Klik Tombol & Interaksi CTA</h3>
+                <h3 className="section-title">
+                  {activeMode === "overview" ? "Ringkasan Interaksi Tombol CTA" : "3. Detail Pelacakan Klik Tombol (Button Tracking)"}
+                </h3>
                 <p className="section-subtitle">
-                  Mendeteksi berapa kali user mengklik tombol-tombol konversi penting di seluruh website
+                  Mendeteksi berapa kali user mengklik tombol pendaftaran, kontak WhatsApp, dan aksi penting lainnya
                 </p>
               </div>
               <div className="analytics-search-box">
                 <Search size={15} className="search-icon" />
                 <input
                   type="text"
-                  placeholder="Cari nama tombol atau lokasi..."
+                  placeholder="Cari tombol atau lokasi..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="analytics-search-input"

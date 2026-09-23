@@ -111,9 +111,19 @@ export default function App() {
           }
         />
 
-        {/* 4. Pelacakan Pengunjung & Trafik (User Tracking) */}
+        {/* 4. Pelacakan Pengunjung & Trafik (User Tracking & Submenu) */}
         <Route
           path="/tracking"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <UserTracking />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/tracking/:submenu"
           element={
             <ProtectedRoute>
               <Layout>

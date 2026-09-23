@@ -4,6 +4,8 @@ import { useAuth } from "../context/AuthContext";
 import logo from "../assets/logo.svg";
 import { 
   Activity,
+  BarChart3,
+  MousePointerClick,
   LayoutDashboard, 
   Home,
   Info,
@@ -32,7 +34,8 @@ export default function Layout({ children }) {
   const [openMenus, setOpenMenus] = useState({
     home: false,
     about: false,
-    articles: true, // default buka karena artikel sudah aktif
+    articles: true,
+    tracking: true,
   });
 
   // Otomatis buka accordion sesuai URL saat ini
@@ -43,6 +46,8 @@ export default function Layout({ children }) {
       setOpenMenus((prev) => ({ ...prev, about: true }));
     } else if (location.pathname.startsWith("/home")) {
       setOpenMenus((prev) => ({ ...prev, home: true }));
+    } else if (location.pathname.startsWith("/tracking")) {
+      setOpenMenus((prev) => ({ ...prev, tracking: true }));
     }
   }, [location.pathname]);
 
@@ -122,8 +127,14 @@ export default function Layout({ children }) {
     topbarTitle = "Pengelola Halaman Beranda";
     livePreviewUrl = "http://localhost:5173/";
     livePreviewText = "Lihat Beranda Live";
-  } else if (location.pathname === "/tracking") {
-    topbarTitle = "Pelacakan Trafik & Pengunjung Website";
+  } else if (location.pathname === "/tracking/pages") {
+    topbarTitle = "1. Pelacakan Halaman (Page Tracking)";
+  } else if (location.pathname === "/tracking/sections") {
+    topbarTitle = "2. Pelacakan Kedalaman Scroll per Section";
+  } else if (location.pathname === "/tracking/buttons") {
+    topbarTitle = "3. Pelacakan Klik Tombol & Interaksi CTA";
+  } else if (location.pathname.startsWith("/tracking")) {
+    topbarTitle = "Ringkasan Pelacakan Trafik & Pengunjung";
   } else if (location.pathname === "/") {
     topbarTitle = "Dashboard Ringkasan CMS";
   }
@@ -150,18 +161,71 @@ export default function Layout({ children }) {
             <span>Dashboard</span>
           </Link>
 
-          {/* Track Pengunjung Item */}
-          <Link
-            to="/tracking"
-            className={`nav-item ${location.pathname === "/tracking" ? "active" : ""}`}
-            onClick={() => setMobileMenuOpen(false)}
-          >
-            <Activity size={18} className="nav-item-icon" />
-            <span>Track Pengunjung</span>
-            <span className="nav-badge-status badge-success" style={{ marginLeft: "auto", fontSize: "10.5px", padding: "2px 7px", fontWeight: 700 }}>
-              Live
-            </span>
-          </Link>
+          <div className="nav-group-title mt-3">ANALITIK & MONITORING</div>
+
+          {/* Accordion Track Pengunjung dengan 3 Submenu */}
+          <div className="nav-group-accordion">
+            <button
+              type="button"
+              onClick={() => toggleMenu("tracking")}
+              className={`nav-accordion-header ${location.pathname.startsWith("/tracking") ? "parent-active" : ""}`}
+              aria-expanded={openMenus.tracking}
+            >
+              <div className="nav-header-left">
+                <Activity size={18} className="nav-item-icon" />
+                <span className="nav-header-title">Track Pengunjung</span>
+              </div>
+
+              <div className="nav-header-right">
+                <span className="nav-badge-status badge-success">Live</span>
+                <ChevronDown
+                  size={15}
+                  className={`nav-chevron-icon ${openMenus.tracking ? "expanded" : ""}`}
+                />
+              </div>
+            </button>
+
+            {openMenus.tracking && (
+              <div className="nav-submenu-list">
+                <Link
+                  to="/tracking"
+                  className={`nav-submenu-link ${location.pathname === "/tracking" ? "active" : ""}`}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <span className="nav-submenu-bullet" />
+                  <span className="nav-submenu-text">Ringkasan Analitik</span>
+                </Link>
+
+                <Link
+                  to="/tracking/pages"
+                  className={`nav-submenu-link ${location.pathname === "/tracking/pages" ? "active" : ""}`}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <span className="nav-submenu-bullet" />
+                  <span className="nav-submenu-text">1. Track Halaman</span>
+                </Link>
+
+                <Link
+                  to="/tracking/sections"
+                  className={`nav-submenu-link ${location.pathname === "/tracking/sections" ? "active" : ""}`}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <span className="nav-submenu-bullet" />
+                  <span className="nav-submenu-text">2. Track Section (Scroll)</span>
+                </Link>
+
+                <Link
+                  to="/tracking/buttons"
+                  className={`nav-submenu-link ${location.pathname === "/tracking/buttons" ? "active" : ""}`}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <span className="nav-submenu-bullet" />
+                  <span className="nav-submenu-text">3. Track Button (Klik)</span>
+                </Link>
+              </div>
+            )}
+          </div>
+
 
 
           <div className="nav-group-title mt-3">KONTEN WEBSITE (PAGES)</div>
