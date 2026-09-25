@@ -1,34 +1,34 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import logo from "../assets/logo.svg";
-import { 
-  Activity,
-  BarChart3,
-  MousePointerClick,
-  LayoutDashboard, 
+import { db } from "../firebase";
+import { collection, onSnapshot } from "firebase/firestore";
+import {
+  LayoutDashboard,
   Home,
   Info,
-  FileText, 
-  PlusCircle, 
-  LogOut, 
+  PhoneCall,
+  FileText,
+  Activity,
+  LogOut,
+  ChevronDown,
   ExternalLink,
   Menu,
   X,
-  UserCheck,
-  ChevronDown,
-  Layers,
+  PlusCircle,
+  Users,
   Sparkles,
-  PhoneCall,
-  Image as ImageIcon,
-  MessageSquareQuote,
   Building2,
+  Layers,
+  MessageSquareQuote,
   Award,
   Monitor,
   LayoutGrid,
   HeartHandshake,
   Gift,
-  Video
+  Video,
+  ImageIcon,
+  UserCheck
 } from "lucide-react";
 
 export default function Layout({ children }) {
@@ -36,16 +36,64 @@ export default function Layout({ children }) {
   const location = useLocation();
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [unreadMessagesCount, setUnreadMessagesCount] = useState(0);
 
-  // State untuk kontrol accordion buka/tutup (default semua tertutup saat baru dibuka agar rapi)
+  // Accordion mode: saat dibuka pertama kali semua tertutup agar rapi (sesuai request user)
   const [openMenus, setOpenMenus] = useState({
     home: false,
     about: false,
+    contact: false,
     articles: false,
     tracking: false,
   });
 
-  // Toggle menu: jika membuka satu menu, tutup menu lainnya (accordion mode) agar sidebar tetap ramping & rapi
+  // Listener real-time untuk jumlah pesan masuk unread
+  useEffect(() => {
+    let unsubscribe = () => {};
+    try {
+      const colRef = collection(db, "contact_messages");
+      unsubscribe = onSnapshot(
+        colRef,
+        (snapshot) => {
+          if (!snapshot.empty) {
+            const count = snapshot.docs.filter((d) => d.data()?.status !== "replied").length;
+            setUnreadMessagesCount(count);
+          } else {
+            setUnreadMessagesCount(0);
+          }
+        },
+        () => setUnreadMessagesCount(0)
+      );
+    } catch {
+      setUnreadMessagesCount(0);
+    }
+    return () => unsubscribe();
+  }, []);
+
+  // Lock body scroll saat mobile drawer terbuka
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [mobileMenuOpen]);
+
+  // Tutup menu saat menekan tombol Escape
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape" && mobileMenuOpen) {
+        setMobileMenuOpen(false);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [mobileMenuOpen]);
+
+  // Toggle accordion: satu menu terbuka akan menutup menu lainnya agar rapi dan tidak ramai
   const toggleMenu = (menuKey) => {
     setOpenMenus((prev) => {
       const willOpen = !prev[menuKey];
@@ -53,6 +101,7 @@ export default function Layout({ children }) {
         return {
           home: false,
           about: false,
+          contact: false,
           articles: false,
           tracking: false,
           [menuKey]: true,
@@ -74,14 +123,12 @@ export default function Layout({ children }) {
     }
   };
 
-  // Konfigurasi Navigasi Modular (Main Menu & Submenu)
+  // Konfigurasi Navigasi Bersih & Rapi (Tanpa badge berulang yang bikin ramai)
   const menuGroups = [
     {
       id: "home",
-      title: "Beranda (Home)",
+      title: "Halaman Beranda",
       icon: Home,
-      badge: "10 Section",
-      badgeClass: "badge-success",
       rootPath: "/home",
       submenus: [
         { label: "1. Hero Banner", path: "/home/hero", icon: Sparkles },
@@ -98,73 +145,114 @@ export default function Layout({ children }) {
     },
     {
       id: "about",
-      title: "Tentang Kami (About)",
-      icon: Info,
-      badge: "Aktif",
-      badgeClass: "badge-success",
+      title: "Tentang Kami",
+      icon: Users,
       rootPath: "/about",
       submenus: [
-        { label: "Sejarah & Foto Tim", path: "/about/history", icon: ImageIcon },
-        { label: "Kenapa Ayo Kasbon (Cards)", path: "/about/why", icon: Layers },
-        { label: "Banner Konsultasi CS", path: "/about/consultation", icon: PhoneCall },
+        { label: "1. Hero Profil & Visi", path: "/about/hero", icon: Sparkles },
+        { label: "2. Sejarah & Foto Tim", path: "/about/history", icon: ImageIcon },
+        { label: "3. Kenapa Ayo Kasbon", path: "/about/why", icon: Layers },
+        { label: "4. Banner Konsultasi CS", path: "/about/consultation", icon: PhoneCall },
+      ],
+    },
+    {
+      id: "contact",
+      title: "Hubungi Kami",
+      icon: PhoneCall,
+      unreadBadge: unreadMessagesCount,
+      rootPath: "/contact",
+      submenus: [
+        { label: "1. Hero & Kolaborasi", path: "/contact/hero", icon: Sparkles },
+        { label: "2. Info Kontak Resmi", path: "/contact/info", icon: PhoneCall },
+        { 
+          label: "3. Kotak Masuk Pesan", 
+          path: "/contact/messages", 
+          icon: MessageSquareQuote, 
+          badge: unreadMessagesCount > 0 ? unreadMessagesCount : null 
+        },
       ],
     },
     {
       id: "articles",
       title: "Berita & Artikel",
       icon: FileText,
-      badge: "Aktif",
-      badgeClass: "badge-success",
       rootPath: "/articles",
       submenus: [
-        { label: "Daftar Semua Artikel", path: "/articles", icon: FileText },
-        { label: "Tulis Artikel Baru", path: "/articles/new", icon: PlusCircle },
+        { label: "1. Header Hero Edukasi", path: "/articles/hero", icon: Sparkles },
+        { label: "2. Daftar Semua Artikel", path: "/articles", icon: FileText },
+        { label: "3. Tulis Artikel Baru", path: "/articles/new", icon: PlusCircle },
       ],
     },
   ];
 
   // Penentuan Judul Topbar & Link Web Live yang Relevan
-  let topbarTitle = "Panel Pengelola CMS Ayo Kasbon";
+  let topbarTitle = "CMS Panel Ayo Kasbon";
   let livePreviewUrl = "http://localhost:5175/";
-  let livePreviewText = "Lihat Beranda";
+  let livePreviewText = "Preview Web";
 
-  if (location.pathname.startsWith("/articles")) {
-    topbarTitle = "Pengelola Berita & Artikel";
+  if (location.pathname === "/articles/hero") {
+    topbarTitle = "Header Hero Edukasi";
     livePreviewUrl = "http://localhost:5175/berita-artikel";
-    livePreviewText = "Lihat Berita Live";
-  } else if (location.pathname.startsWith("/about")) {
-    topbarTitle = "Pengelola Halaman Tentang Kami";
+    livePreviewText = "Preview Artikel";
+  } else if (location.pathname.startsWith("/articles")) {
+    topbarTitle = "Kelola Artikel & Berita";
+    livePreviewUrl = "http://localhost:5175/berita-artikel";
+    livePreviewText = "Preview Artikel";
+  } else if (location.pathname.startsWith("/contact/messages")) {
+    topbarTitle = "Kotak Masuk Pesan Form";
+    livePreviewUrl = "http://localhost:5175/hubungi-kami";
+    livePreviewText = "Preview Form";
+  } else if (location.pathname.startsWith("/contact")) {
+    topbarTitle = "Kelola Hubungi Kami";
+    livePreviewUrl = "http://localhost:5175/hubungi-kami";
+    livePreviewText = "Preview Kontak";
+  } else if (location.pathname === "/about/hero") {
+    topbarTitle = "Hero Profil Tentang Kami";
     livePreviewUrl = "http://localhost:5175/tentang-kami";
-    livePreviewText = "Lihat Tentang Kami";
+    livePreviewText = "Preview Tentang";
+  } else if (location.pathname.startsWith("/about")) {
+    topbarTitle = "Kelola Tentang Kami";
+    livePreviewUrl = "http://localhost:5175/tentang-kami";
+    livePreviewText = "Preview Tentang";
   } else if (location.pathname.startsWith("/home")) {
-    topbarTitle = "Pengelola Halaman Beranda";
+    topbarTitle = "Kelola Beranda Utama";
     livePreviewUrl = "http://localhost:5175/";
-    livePreviewText = "Lihat Beranda Live";
+    livePreviewText = "Preview Beranda";
   } else if (location.pathname === "/tracking/pages") {
-    topbarTitle = "1. Pelacakan Halaman (Page Tracking)";
+    topbarTitle = "Pelacakan Halaman";
   } else if (location.pathname === "/tracking/sections") {
-    topbarTitle = "2. Pelacakan Kedalaman Scroll per Section";
+    topbarTitle = "Pelacakan Section Scroll";
   } else if (location.pathname === "/tracking/buttons") {
-    topbarTitle = "3. Pelacakan Klik Tombol & Interaksi CTA";
+    topbarTitle = "Pelacakan Klik Tombol";
   } else if (location.pathname.startsWith("/tracking")) {
-    topbarTitle = "Ringkasan Pelacakan Trafik & Pengunjung";
+    topbarTitle = "Analitik Pengunjung Live";
   } else if (location.pathname === "/") {
-    topbarTitle = "Dashboard Ringkasan CMS";
+    topbarTitle = "Dashboard CMS";
   }
 
   return (
     <div className="cms-app-wrapper">
-      {/* Sidebar Desktop & Mobile */}
-      <aside className={`cms-sidebar ${mobileMenuOpen ? "open" : ""}`}>
+      {/* Sidebar Navigasi Admin */}
+      <aside className={`cms-sidebar ${mobileMenuOpen ? "mobile-open" : ""}`}>
         <div className="sidebar-brand">
-          <img src={logo} alt="Ayo Kasbon" className="sidebar-logo" />
-          <div className="sidebar-brand-badge">CMS ADMIN</div>
+          <div className="sidebar-brand-left">
+            <img src="/logo.png" alt="Ayo Kasbon" className="sidebar-logo" />
+            <span className="sidebar-brand-badge">CMS</span>
+          </div>
+          <button 
+            type="button" 
+            className="sidebar-close-btn-mobile" 
+            onClick={() => setMobileMenuOpen(false)}
+            aria-label="Tutup Menu"
+          >
+            <X size={18} />
+          </button>
         </div>
 
         <nav className="sidebar-nav">
           <div className="nav-group-title">NAVIGASI UTAMA</div>
-          
-          {/* Dashboard Item Tunggal */}
+
+          {/* Menu Dashboard Utama */}
           <Link
             to="/"
             className={`nav-item ${location.pathname === "/" ? "active" : ""}`}
@@ -176,7 +264,7 @@ export default function Layout({ children }) {
 
           <div className="nav-group-title mt-3">ANALITIK & MONITORING</div>
 
-          {/* Accordion Track Pengunjung dengan 3 Submenu */}
+          {/* Accordion Track Pengunjung */}
           <div className="nav-group-accordion">
             <button
               type="button"
@@ -190,7 +278,7 @@ export default function Layout({ children }) {
               </div>
 
               <div className="nav-header-right">
-                <span className="nav-badge-status badge-success">Live</span>
+                <span className="nav-pulse-dot" title="Live Monitoring" />
                 <ChevronDown
                   size={15}
                   className={`nav-chevron-icon ${openMenus.tracking ? "expanded" : ""}`}
@@ -248,11 +336,9 @@ export default function Layout({ children }) {
             )}
           </div>
 
+          <div className="nav-group-title mt-3">KONTEN WEBSITE</div>
 
-
-          <div className="nav-group-title mt-3">KONTEN WEBSITE (PAGES)</div>
-
-          {/* List Accordion Menu Groups */}
+          {/* List Accordion Menu Groups Halaman */}
           {menuGroups.map((group) => {
             const GroupIcon = group.icon;
             const isOpen = openMenus[group.id];
@@ -272,9 +358,9 @@ export default function Layout({ children }) {
                   </div>
 
                   <div className="nav-header-right">
-                    {group.badge && (
-                      <span className={`nav-badge-status ${group.badgeClass}`}>
-                        {group.badge}
+                    {group.unreadBadge > 0 && (
+                      <span className="nav-badge-unread" title={`${group.unreadBadge} pesan baru`}>
+                        {group.unreadBadge}
                       </span>
                     )}
                     <ChevronDown
@@ -288,10 +374,11 @@ export default function Layout({ children }) {
                 {isOpen && (
                   <div className="nav-submenu-list">
                     {group.submenus.map((sub) => {
-                      const SubIcon = sub.icon;
                       const isSubActive = 
                         location.pathname === sub.path ||
                         (sub.path === "/home/hero" && location.pathname === "/home") ||
+                        (sub.path === "/about/hero" && location.pathname === "/about") ||
+                        (sub.path === "/contact/hero" && location.pathname === "/contact") ||
                         (sub.path === "/articles" && location.pathname.startsWith("/articles/edit/"));
 
                       return (
@@ -303,6 +390,9 @@ export default function Layout({ children }) {
                         >
                           <span className="nav-submenu-bullet" />
                           <span className="nav-submenu-text">{sub.label}</span>
+                          {sub.badge && (
+                            <span className="nav-submenu-badge">{sub.badge}</span>
+                          )}
                         </Link>
                       );
                     })}
@@ -317,7 +407,7 @@ export default function Layout({ children }) {
         <div className="sidebar-footer">
           <div className="admin-user-card">
             <div className="admin-user-avatar">
-              <UserCheck size={18} />
+              <UserCheck size={16} />
             </div>
             <div className="admin-user-info">
               <span className="admin-user-label">Admin Terverifikasi</span>
@@ -328,7 +418,7 @@ export default function Layout({ children }) {
           </div>
 
           <button onClick={handleLogout} className="btn-logout" title="Keluar dari CMS">
-            <LogOut size={17} />
+            <LogOut size={16} />
             <span>Keluar Sesi</span>
           </button>
         </div>
@@ -347,16 +437,18 @@ export default function Layout({ children }) {
       <div className="cms-main-container">
         {/* Topbar */}
         <header className="cms-topbar">
-          <button 
-            className="btn-mobile-toggle"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            aria-label="Toggle menu"
-          >
-            {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
-          </button>
+          <div className="topbar-left">
+            <button 
+              className="btn-mobile-toggle"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label="Buka menu navigasi"
+            >
+              {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
 
-          <div className="topbar-title-box">
-            <h2 className="topbar-title">{topbarTitle}</h2>
+            <div className="topbar-title-box">
+              <h2 className="topbar-title">{topbarTitle}</h2>
+            </div>
           </div>
 
           <div className="topbar-actions">
@@ -365,9 +457,10 @@ export default function Layout({ children }) {
               target="_blank" 
               rel="noreferrer" 
               className="btn-preview-live"
+              title="Buka tampilan website asli di tab baru"
             >
-              <ExternalLink size={15} />
-              <span>{livePreviewText}</span>
+              <ExternalLink size={14} />
+              <span className="btn-preview-text">{livePreviewText}</span>
             </a>
           </div>
         </header>

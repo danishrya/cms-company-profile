@@ -21,11 +21,21 @@ import {
   ShieldCheck,
   Zap,
   Check,
-  HeartHandshake
+  HeartHandshake,
+  AlertCircle
 } from "lucide-react";
 
 // Default content bawaan resmi Ayo Kasbon
 const DEFAULT_ABOUT_DATA = {
+  hero: {
+    title: "Tentang Kami",
+    description: "Pelajari dedikasi dan komitmen AYO Kasbon dalam menghadirkan Platform Kasbon Instan terdepan di Indonesia untuk meningkatkan kesejahteraan finansial karyawan serta efisiensi bisnis Anda.",
+    highlightWord: "Platform Kasbon Instan",
+    primaryBtnText: "Mulai Sekarang",
+    primaryBtnLink: "https://app.ayokasbon.com/",
+    secondaryBtnText: "Pelajari Sejarah Kami",
+    secondaryBtnLink: "#sejarah-perusahaan"
+  },
   history: {
     photo: "", // Kosong = gunakan aset lokal team-history.png
     badge: "Didirikan Agustus 2023",
@@ -69,7 +79,7 @@ const DEFAULT_ABOUT_DATA = {
 };
 
 export default function AboutManager() {
-  const { section = "history" } = useParams();
+  const { section = "hero" } = useParams();
 
   const [formData, setFormData] = useState(DEFAULT_ABOUT_DATA);
   const [loading, setLoading] = useState(true);
@@ -79,12 +89,12 @@ export default function AboutManager() {
   // State upload file
   const [uploadingHistoryPhoto, setUploadingHistoryPhoto] = useState(false);
   const [uploadingMockupPhoto, setUploadingMockupPhoto] = useState(false);
-  const [uploadingCsPhoto, setUploadingCsPhoto] = useState(false);
 
   const tabs = [
-    { id: "history", label: "Sejarah & Foto Tim", icon: ImageIcon },
-    { id: "why", label: "Kenapa Ayo Kasbon (Cards)", icon: Layers },
-    { id: "consultation", label: "Banner Konsultasi CS", icon: PhoneCall },
+    { id: "hero", label: "1. Hero Profil & Visi", icon: Sparkles },
+    { id: "history", label: "2. Sejarah & Foto Tim", icon: ImageIcon },
+    { id: "why", label: "3. Kenapa Ayo Kasbon", icon: Layers },
+    { id: "consultation", label: "4. Banner Konsultasi CS", icon: PhoneCall },
   ];
 
   // Muat data dari Firestore
@@ -92,19 +102,17 @@ export default function AboutManager() {
     async function loadAboutData() {
       try {
         setLoading(true);
-        // Cek __page_about di articles
         let snap = await getDoc(doc(db, "articles", "__page_about"));
         if (!snap.exists()) {
           try {
             snap = await getDoc(doc(db, "site_content", "about"));
-          } catch (e) {
-            // ignore
-          }
+          } catch {}
         }
 
         if (snap.exists()) {
           const remoteData = snap.data();
           setFormData({
+            hero: { ...DEFAULT_ABOUT_DATA.hero, ...remoteData.hero },
             history: { ...DEFAULT_ABOUT_DATA.history, ...remoteData.history },
             why: { 
               ...DEFAULT_ABOUT_DATA.why, 
@@ -135,13 +143,11 @@ export default function AboutManager() {
   const handleUploadPhoto = async (file, fieldPath, setProgressState) => {
     if (!file) return;
 
-    // Validasi tipe file
     if (!file.type.startsWith("image/")) {
       alert("Harap pilih file gambar (PNG, JPG, JPEG, WebP).");
       return;
     }
 
-    // Validasi ukuran file (maks 5MB)
     if (file.size > 5 * 1024 * 1024) {
       alert("Ukuran foto maksimal 5MB.");
       return;
@@ -157,7 +163,7 @@ export default function AboutManager() {
 
       uploadTask.on(
         "state_changed",
-        (snapshot) => {},
+        () => {},
         (error) => {
           console.error("Upload error:", error);
           alert("Gagal mengunggah foto: " + error.message);
@@ -175,14 +181,9 @@ export default function AboutManager() {
               ...prev,
               why: { ...prev.why, mockupImage: downloadUrl },
             }));
-          } else if (fieldPath === "consultation.bannerImage") {
-            setFormData((prev) => ({
-              ...prev,
-              consultation: { ...prev.consultation, bannerImage: downloadUrl },
-            }));
           }
           setProgressState(false);
-          showToast("Foto berhasil diunggah dan disimpan ke form!");
+          showToast("Foto berhasil diunggah!");
         }
       );
     } catch (err) {
@@ -192,7 +193,13 @@ export default function AboutManager() {
     }
   };
 
-  // Handler Perubahan Input History
+  const handleHeroChange = (field, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      hero: { ...prev.hero, [field]: value }
+    }));
+  };
+
   const handleHistoryChange = (field, value) => {
     setFormData((prev) => ({
       ...prev,
@@ -200,7 +207,6 @@ export default function AboutManager() {
     }));
   };
 
-  // Handler Perubahan Input Why
   const handleWhyChange = (field, value) => {
     setFormData((prev) => ({
       ...prev,
@@ -208,19 +214,18 @@ export default function AboutManager() {
     }));
   };
 
-  // Handler Perubahan Card Feature
   const handleFeatureChange = (index, field, value) => {
-    setFormData((prev) => {
-      const updated = [...prev.why.features];
-      updated[index] = { ...updated[index], [field]: value };
-      return {
-        ...prev,
-        why: { ...prev.why, features: updated },
-      };
-    });
+    const updatedFeatures = [...formData.why.features];
+    updatedFeatures[index] = {
+      ...updatedFeatures[index],
+      [field]: value,
+    };
+    setFormData((prev) => ({
+      ...prev,
+      why: { ...prev.why, features: updatedFeatures },
+    }));
   };
 
-  // Handler Perubahan Consultation
   const handleConsultationChange = (field, value) => {
     setFormData((prev) => ({
       ...prev,
@@ -228,49 +233,42 @@ export default function AboutManager() {
     }));
   };
 
-  // Simpan Semua Perubahan ke Firestore
   const handleSave = async () => {
     try {
       setSaving(true);
       const payload = {
         ...formData,
-        isPageConfig: true,
-        updatedAt: serverTimestamp(),
+        lastUpdated: serverTimestamp()
       };
 
-      // 1. Simpan ke __page_about (izin baca publik terjamin)
       await setDoc(doc(db, "articles", "__page_about"), payload, { merge: true });
 
-      // 2. Simpan juga ke site_content/about
       try {
         await setDoc(doc(db, "site_content", "about"), payload, { merge: true });
-      } catch (e) {
-        // ignore jika aturan site_content dibatasi
-      }
+      } catch {}
 
-      showToast("✅ Berhasil disimpan! Halaman Tentang Kami di website utama sudah diperbarui secara langsung.");
+      showToast("Data Halaman Tentang Kami berhasil disimpan ke Firebase!");
     } catch (err) {
-      console.error("Gagal menyimpan ke Firestore:", err);
-      alert("Gagal menyimpan perubahan: " + err.message);
+      console.error("Gagal menyimpan:", err);
+      alert("Gagal menyimpan data: " + err.message);
     } finally {
       setSaving(false);
     }
   };
 
-  // Reset ke data default resmi
   const handleResetDefault = () => {
-    if (window.confirm("Kembalikan semua teks dan foto halaman Tentang Kami ke data default resmi?")) {
+    if (window.confirm("Kembalikan konten halaman Tentang Kami ke pengaturan bawaan resmi Ayo Kasbon?")) {
       setFormData(DEFAULT_ABOUT_DATA);
-      showToast("Form di-reset ke nilai default bawaan. Jangan lupa klik Simpan Perubahan!");
+      showToast("Formulir telah direset ke nilai default.");
     }
   };
 
   if (loading) {
     return (
       <div className="cms-page-container">
-        <div className="cms-table-loading" style={{ minHeight: "400px" }}>
-          <div className="cms-spinner"></div>
-          <p>Memuat data konfigurasi Tentang Kami...</p>
+        <div className="cms-loading-state">
+          <div className="cms-spinner" />
+          <p>Memuat Konfigurasi Halaman Tentang Kami...</p>
         </div>
       </div>
     );
@@ -280,35 +278,26 @@ export default function AboutManager() {
     <div className="cms-page-container">
       {/* Toast Notification */}
       {toast.show && (
-        <div className={`cms-floating-toast ${toast.type}`}>
-          <CheckCircle2 size={18} />
-          <span>{toast.message}</span>
+        <div className={`cms-toast ${toast.type === "success" ? "toast-success" : "toast-error"}`}>
+          <div className="d-flex align-center gap-2">
+            {toast.type === "success" ? <CheckCircle2 size={18} /> : <AlertCircle size={18} />}
+            <span>{toast.message}</span>
+          </div>
         </div>
       )}
 
-      {/* Page Header */}
+      {/* Header Halaman */}
       <div className="cms-page-header">
         <div>
-
           <h1 className="cms-page-title">Pengelola Halaman Tentang Kami</h1>
           <p className="cms-page-subtitle">
-            Kustomisasi foto dokumentasi tim/kantor, cerita sejarah pendiri, kartu keunggulan, dan banner konsultasi CS.
+            Kelola teks hero visi perusahaan, foto tim sejarah pendiri, kartu 3 pilar keunggulan, serta banner penawaran konsultasi CS.
           </p>
         </div>
 
         <div className="cms-header-actions">
-          <button 
-            type="button" 
-            onClick={handleResetDefault}
-            className="btn-secondary-action"
-            title="Reset ke nilai awal bawaan"
-          >
-            <RotateCcw size={16} />
-            <span>Reset Bawaan</span>
-          </button>
-
           <a
-            href="http://localhost:5173/tentang-kami"
+            href="http://localhost:5175/tentang-kami"
             target="_blank"
             rel="noreferrer"
             className="btn-secondary-action"
@@ -323,86 +312,195 @@ export default function AboutManager() {
             disabled={saving}
             className="btn-primary-action"
           >
-            {saving ? (
-              <div className="cms-spinner-sm" />
-            ) : (
-              <Save size={18} />
-            )}
-            <span>{saving ? "Menyimpan ke Firebase..." : "Simpan Perubahan"}</span>
+            {saving ? <div className="cms-spinner-sm" /> : <Save size={16} />}
+            <span>{saving ? "Menyimpan..." : "Simpan Perubahan"}</span>
           </button>
         </div>
       </div>
 
-      {/* Tabs Navigation */}
-      <div className="cms-tabs-container mb-4">
+      {/* Navigasi Submenu / Tab */}
+      <div className="cms-tabs-bar">
         {tabs.map((tab) => {
-          const Icon = tab.icon;
+          const TabIcon = tab.icon;
           const isActive = section === tab.id;
           return (
             <Link
               key={tab.id}
               to={`/about/${tab.id}`}
-              className={`cms-tab-item ${isActive ? "active" : ""}`}
+              className={`cms-tab-btn ${isActive ? "active" : ""}`}
             >
-              <Icon size={16} />
+              <TabIcon size={16} />
               <span>{tab.label}</span>
             </Link>
           );
         })}
       </div>
 
-      {/* ========================================================================= */}
-      {/* TAB 1: SEJARAH & FOTO DOKUMENTASI TIM                                     */}
-      {/* ========================================================================= */}
-      {section === "history" && (
+      {/* TAB 1: HERO TENTANG KAMI */}
+      {section === "hero" && (
         <div className="cms-editor-card">
           <div className="editor-card-header">
             <div>
-              <h3>Modul 1: Sejarah & Foto Dokumentasi Tim / Kantor</h3>
-              <p>Atur foto dokumentasi kantor, tahun pendirian, nama para pendiri, dan narasi sejarah.</p>
+              <h3>Modul 1: Hero Profil & Visi Perusahaan</h3>
+              <p>Kelola judul banner utama, deskripsi misi, kata kunci yang disorot, dan tombol ajakan bertindak (CTA).</p>
             </div>
             <span className="badge-live-tag">Terkoneksi ke /tentang-kami</span>
           </div>
 
           <div className="form-grid-layout">
-            {/* Foto Tim Upload / URL */}
-            <div className="form-full-col">
-              <label className="form-label-bold">
-                1. Foto Dokumentasi Tim & Kantor
-              </label>
-              <p className="form-hint-text">
-                Foto ini akan tampil di samping teks sejarah perusahaan. Anda dapat mengunggah file gambar baru atau memasukkan URL gambar.
-              </p>
+            <div className="form-half-col">
+              <label className="form-label-bold">1. Judul Utama Hero</label>
+              <input
+                type="text"
+                value={formData.hero.title}
+                onChange={(e) => handleHeroChange("title", e.target.value)}
+                placeholder="Tentang Kami"
+                className="form-input"
+              />
+            </div>
 
-              <div className="photo-manager-layout">
-                {/* Preview Box */}
+            <div className="form-half-col">
+              <label className="form-label-bold">2. Kata Sorotan Berwarna (Highlight)</label>
+              <input
+                type="text"
+                value={formData.hero.highlightWord}
+                onChange={(e) => handleHeroChange("highlightWord", e.target.value)}
+                placeholder="Platform Kasbon Instan"
+                className="form-input"
+              />
+              <span className="form-hint-text">Frasa di dalam deskripsi yang diberi efek highlight.</span>
+            </div>
+
+            <div className="form-full-col">
+              <label className="form-label-bold">3. Paragraf Deskripsi Visi & Misi</label>
+              <textarea
+                rows={4}
+                value={formData.hero.description}
+                onChange={(e) => handleHeroChange("description", e.target.value)}
+                placeholder="Tuliskan dedikasi dan komitmen Ayo Kasbon..."
+                className="form-textarea"
+              />
+            </div>
+
+            <div className="form-half-col">
+              <label className="form-label-bold">4. Teks Tombol Utama (Primary CTA)</label>
+              <input
+                type="text"
+                value={formData.hero.primaryBtnText}
+                onChange={(e) => handleHeroChange("primaryBtnText", e.target.value)}
+                placeholder="Mulai Sekarang"
+                className="form-input"
+              />
+            </div>
+
+            <div className="form-half-col">
+              <label className="form-label-bold">5. Tautan Tombol Utama</label>
+              <input
+                type="text"
+                value={formData.hero.primaryBtnLink}
+                onChange={(e) => handleHeroChange("primaryBtnLink", e.target.value)}
+                placeholder="https://app.ayokasbon.com/"
+                className="form-input"
+              />
+            </div>
+
+            <div className="form-half-col">
+              <label className="form-label-bold">6. Teks Tombol Sekunder</label>
+              <input
+                type="text"
+                value={formData.hero.secondaryBtnText}
+                onChange={(e) => handleHeroChange("secondaryBtnText", e.target.value)}
+                placeholder="Pelajari Sejarah Kami"
+                className="form-input"
+              />
+            </div>
+
+            <div className="form-half-col">
+              <label className="form-label-bold">7. Tautan Tombol Sekunder</label>
+              <input
+                type="text"
+                value={formData.hero.secondaryBtnLink}
+                onChange={(e) => handleHeroChange("secondaryBtnLink", e.target.value)}
+                placeholder="#sejarah-perusahaan"
+                className="form-input"
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* TAB 2: SEJARAH & FOTO TIM */}
+      {section === "history" && (
+        <div className="cms-editor-card">
+          <div className="editor-card-header">
+            <div>
+              <h3>Modul 2: Sejarah Perusahaan & Dokumentasi Foto Tim</h3>
+              <p>Kelola narasi pendirian, foto kantor/tim, nama pendiri, dan komitmen layanan.</p>
+            </div>
+            <span className="badge-live-tag">Terkoneksi ke /tentang-kami</span>
+          </div>
+
+          <div className="form-grid-layout">
+            <div className="form-half-col">
+              <label className="form-label-bold">1. Badge Tahun Pendirian</label>
+              <input
+                type="text"
+                value={formData.history.badge}
+                onChange={(e) => handleHistoryChange("badge", e.target.value)}
+                placeholder="Didirikan Agustus 2023"
+                className="form-input"
+              />
+              <span className="form-hint-text">Ditampilkan pada floating badge di atas foto tim.</span>
+            </div>
+
+            <div className="form-half-col">
+              <label className="form-label-bold">2. Subjudul / Eyebrow Text</label>
+              <input
+                type="text"
+                value={formData.history.eyebrow}
+                onChange={(e) => handleHistoryChange("eyebrow", e.target.value)}
+                placeholder="Perjalanan & Komitmen Kami"
+                className="form-input"
+              />
+            </div>
+
+            <div className="form-full-col">
+              <label className="form-label-bold">3. Judul Section</label>
+              <input
+                type="text"
+                value={formData.history.title}
+                onChange={(e) => handleHistoryChange("title", e.target.value)}
+                placeholder="Sejarah Perusahaan"
+                className="form-input"
+              />
+            </div>
+
+            <div className="form-full-col">
+              <label className="form-label-bold">4. Foto Tim Dokumentasi / Kantor</label>
+              
+              <div className="photo-editor-wrapper">
                 <div className="photo-preview-box">
                   {formData.history.photo ? (
-                    <img
-                      src={formData.history.photo}
-                      alt="Preview Foto Tim"
-                      className="photo-preview-image"
-                    />
+                    <img src={formData.history.photo} alt="Preview Foto Tim" className="preview-img-square" />
                   ) : (
-                    <div className="photo-preview-default">
-                      <ImageIcon size={40} className="text-muted" />
-                      <span>Menggunakan Foto Bawaan Tim (team-history.png)</span>
+                    <div className="default-photo-placeholder">
+                      <ImageIcon size={28} className="text-blue" />
+                      <span>Menggunakan Foto Tim Bawaan (team-history.png)</span>
                     </div>
                   )}
+
                   {formData.history.photo && (
                     <button
                       type="button"
                       onClick={() => handleHistoryChange("photo", "")}
                       className="btn-remove-photo"
-                      title="Kembalikan ke foto bawaan"
                     >
                       <Trash2 size={14} />
-                      <span>Gunakan Foto Bawaan</span>
+                      <span>Gunakan Gambar Bawaan</span>
                     </button>
                   )}
                 </div>
 
-                {/* Upload & URL Inputs */}
                 <div className="photo-inputs-box">
                   <div className="upload-file-dropzone">
                     <input
@@ -418,20 +516,19 @@ export default function AboutManager() {
                     />
                     <label htmlFor="history-photo-input" className="btn-upload-file">
                       <Upload size={16} />
-                      <span>{uploadingHistoryPhoto ? "Mengunggah ke Firebase Storage..." : "Upload Foto dari Komputer"}</span>
+                      <span>{uploadingHistoryPhoto ? "Mengunggah..." : "Upload Foto Baru"}</span>
                     </label>
-                    <span className="upload-help-note">Format: PNG, JPG, JPEG, WebP (Maks 5MB)</span>
                   </div>
 
                   <div className="divider-or">
-                    <span>atau masukkan URL gambar langsung</span>
+                    <span>atau masukkan URL gambar eksternal</span>
                   </div>
 
                   <div className="input-with-icon">
                     <Link2 size={16} className="input-icon" />
                     <input
                       type="url"
-                      placeholder="https://contoh-domain.com/foto-tim.jpg"
+                      placeholder="https://contoh.com/foto-kantor.jpg"
                       value={formData.history.photo}
                       onChange={(e) => handleHistoryChange("photo", e.target.value)}
                       className="form-input"
@@ -441,70 +538,13 @@ export default function AboutManager() {
               </div>
             </div>
 
-            {/* Badge & Eyebrow */}
-            <div className="form-half-col">
-              <label className="form-label-bold">2. Badge Floating (Pill Tanggal)</label>
-              <input
-                type="text"
-                value={formData.history.badge}
-                onChange={(e) => handleHistoryChange("badge", e.target.value)}
-                placeholder="Contoh: Didirikan Agustus 2023"
-                className="form-input"
-              />
-              <span className="form-hint-text">Teks kecil di atas foto sejarah</span>
-            </div>
-
-            <div className="form-half-col">
-              <label className="form-label-bold">3. Label Subtitle (Eyebrow)</label>
-              <input
-                type="text"
-                value={formData.history.eyebrow}
-                onChange={(e) => handleHistoryChange("eyebrow", e.target.value)}
-                placeholder="Contoh: Perjalanan & Komitmen Kami"
-                className="form-input"
-              />
-            </div>
-
-            {/* Judul & Nama Pendiri */}
-            <div className="form-half-col">
-              <label className="form-label-bold">4. Judul Bagian</label>
-              <input
-                type="text"
-                value={formData.history.title}
-                onChange={(e) => handleHistoryChange("title", e.target.value)}
-                placeholder="Contoh: Sejarah Perusahaan"
-                className="form-input"
-              />
-            </div>
-
-            <div className="form-half-col">
-              <label className="form-label-bold">5. Nama Pendiri yang Di-Highlight</label>
-              <div className="d-flex gap-2">
-                <input
-                  type="text"
-                  value={formData.history.founder1}
-                  onChange={(e) => handleHistoryChange("founder1", e.target.value)}
-                  placeholder="Pendiri 1 (Ari Gunawan)"
-                  className="form-input"
-                />
-                <input
-                  type="text"
-                  value={formData.history.founder2}
-                  onChange={(e) => handleHistoryChange("founder2", e.target.value)}
-                  placeholder="Pendiri 2 (Tona Mahfirohman)"
-                  className="form-input"
-                />
-              </div>
-            </div>
-
-            {/* Narasi Cerita Lengkap */}
             <div className="form-full-col">
-              <label className="form-label-bold">6. Paragraf Narasi Sejarah Lengkap</label>
+              <label className="form-label-bold">5. Paragraf Narasi Sejarah & Visi</label>
               <textarea
                 rows={5}
                 value={formData.history.paragraph}
                 onChange={(e) => handleHistoryChange("paragraph", e.target.value)}
-                placeholder="Ceritakan sejarah dan visi awal perusahaan..."
+                placeholder="Tuliskan cerita perjalanan pendirian Ayo Kasbon..."
                 className="form-textarea"
               />
             </div>
@@ -512,23 +552,20 @@ export default function AboutManager() {
         </div>
       )}
 
-      {/* ========================================================================= */}
-      {/* TAB 2: KENAPA HARUS AYO KASBON? (CARDS & MOCKUP)                          */}
-      {/* ========================================================================= */}
+      {/* TAB 3: KENAPA AYO KASBON & 3 KARTU KEUNGGULAN */}
       {section === "why" && (
         <div className="cms-editor-card">
           <div className="editor-card-header">
             <div>
-              <h3>Modul 2: Kenapa Harus Ayo Kasbon? (3 Kartu Keunggulan)</h3>
-              <p>Kelola judul, foto mockup smartphone aplikasi, serta judul & deskripsi 3 pilar keunggulan.</p>
+              <h3>Modul 3: Kenapa Harus Ayo Kasbon? (3 Kartu Pilar)</h3>
+              <p>Kelola headline, gambar mockup aplikasi di sebelah kiri, dan rincian 3 kartu pilar keunggulan kasbon.</p>
             </div>
             <span className="badge-live-tag">Terkoneksi ke /tentang-kami</span>
           </div>
 
           <div className="form-grid-layout">
-            {/* Judul Bagian */}
             <div className="form-full-col">
-              <label className="form-label-bold">1. Judul Bagian</label>
+              <label className="form-label-bold">1. Judul Section</label>
               <input
                 type="text"
                 value={formData.why.title}
@@ -538,25 +575,20 @@ export default function AboutManager() {
               />
             </div>
 
-            {/* Foto Mockup Smartphone */}
             <div className="form-full-col">
-              <label className="form-label-bold">2. Foto Mockup Smartphone Aplikasi</label>
-              <p className="form-hint-text">Tampil di kolom kanan mendampingi ketiga kartu keunggulan.</p>
+              <label className="form-label-bold">2. Gambar Mockup Aplikasi (Smartphone)</label>
               
-              <div className="photo-manager-layout">
-                <div className="photo-preview-box mockup">
+              <div className="photo-editor-wrapper">
+                <div className="photo-preview-box">
                   {formData.why.mockupImage ? (
-                    <img
-                      src={formData.why.mockupImage}
-                      alt="Mockup Phone"
-                      className="photo-preview-image contain"
-                    />
+                    <img src={formData.why.mockupImage} alt="Preview Mockup" className="preview-img-square" />
                   ) : (
-                    <div className="photo-preview-default">
-                      <ImageIcon size={36} className="text-muted" />
-                      <span>Mockup Smartphone Bawaan (why-mockup-phone.png)</span>
+                    <div className="default-photo-placeholder">
+                      <ImageIcon size={28} className="text-blue" />
+                      <span>Menggunakan Mockup Bawaan (why-mockup-phone.png)</span>
                     </div>
                   )}
+
                   {formData.why.mockupImage && (
                     <button
                       type="button"
@@ -606,7 +638,6 @@ export default function AboutManager() {
               </div>
             </div>
 
-            {/* List 3 Kartu Keunggulan */}
             <div className="form-full-col">
               <label className="form-label-bold mb-3">3. Konfigurasi 3 Kartu Keunggulan</label>
               
@@ -659,14 +690,12 @@ export default function AboutManager() {
         </div>
       )}
 
-      {/* ========================================================================= */}
-      {/* TAB 3: BANNER KONSULTASI CS (CTA BANNER)                                   */}
-      {/* ========================================================================= */}
+      {/* TAB 4: BANNER KONSULTASI CS (CTA BANNER) */}
       {section === "consultation" && (
         <div className="cms-editor-card">
           <div className="editor-card-header">
             <div>
-              <h3>Modul 3: Banner Konsultasi Gratis & Demo Aplikasi (CTA)</h3>
+              <h3>Modul 4: Banner Konsultasi Gratis & Demo Aplikasi (CTA)</h3>
               <p>Kelola headline banner, ajakan konsultasi, dan link/nomor kontak tujuan.</p>
             </div>
             <span className="badge-live-tag">Terkoneksi ke /tentang-kami</span>
@@ -724,7 +753,7 @@ export default function AboutManager() {
       {/* Floating Bottom Bar for Quick Save */}
       <div className="cms-bottom-save-bar">
         <div className="save-bar-info">
-          <span>Pastikan untuk menyimpan perubahan setelah mengedit formulir.</span>
+          <span>Pastikan untuk menyimpan perubahan setelah mengedit formulir Tentang Kami.</span>
         </div>
         <div className="d-flex align-center gap-2">
           <button 

@@ -7,8 +7,10 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import ArticlesList from "./pages/ArticlesList";
 import ArticleEditor from "./pages/ArticleEditor";
+import ArticleHeroManager from "./pages/ArticleHeroManager";
 import AboutManager from "./pages/AboutManager";
 import HomeManager from "./pages/HomeManager";
+import ContactManager from "./pages/ContactManager";
 import UserTracking from "./pages/UserTracking";
 import "./App.css";
 
@@ -32,6 +34,17 @@ export default function App() {
         />
 
         {/* 1. Berita & Artikel Routes */}
+        <Route
+          path="/articles/hero"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <ArticleHeroManager />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+
         <Route
           path="/articles"
           element={
@@ -65,7 +78,7 @@ export default function App() {
           }
         />
 
-        {/* 2. Tentang Kami (About) Routes - Tahap 2 */}
+        {/* 2. Tentang Kami (About) Routes */}
         <Route
           path="/about"
           element={
@@ -88,7 +101,30 @@ export default function App() {
           }
         />
 
-        {/* 3. Beranda (Home) Routes - Tahap 3 */}
+        {/* 3. Hubungi Kami (Contact) Routes */}
+        <Route
+          path="/contact"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <ContactManager />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/contact/:section"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <ContactManager />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+
+        {/* 4. Beranda (Home) Routes */}
         <Route
           path="/home"
           element={
@@ -111,7 +147,7 @@ export default function App() {
           }
         />
 
-        {/* 4. Pelacakan Pengunjung & Trafik (User Tracking & Submenu) */}
+        {/* 5. Pelacakan Pengunjung & Trafik (User Tracking) */}
         <Route
           path="/tracking"
           element={
@@ -132,6 +168,7 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+
         {/* Catch all fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
