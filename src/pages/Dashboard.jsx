@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { collection, getDocs, doc, getDoc, deleteDoc, addDoc, serverTimestamp } from "firebase/firestore";
+import { collection, getDocs, doc, deleteDoc, addDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "../firebase";
 import { 
   FileText, 
@@ -20,13 +20,36 @@ import {
   Inbox
 } from "lucide-react";
 
+// Safe text extractor helpers to prevent rendering Objects as React children
+const getAuthorName = (author) => {
+  if (!author) return "Tim Redaksi";
+  if (typeof author === "object") return author.name || author.role || "Tim Redaksi";
+  if (typeof author === "string") return author;
+  return "Tim Redaksi";
+};
+
+const getArticleDate = (art) => {
+  if (typeof art.date === "string" && art.date.trim()) return art.date;
+  if (art.createdAt?.toDate) {
+    try {
+      return art.createdAt.toDate().toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" });
+    } catch {}
+  }
+  return "Terbaru";
+};
+
+const getArticleTitle = (title) => {
+  if (typeof title === "string" && title.trim()) return title;
+  return "Artikel Tanpa Judul";
+};
+
 // 6 Artikel Sampel Resmi
 const SEED_ARTICLES = [
   {
     title: "Mengenal Earned Wage Access (EWA): Solusi Finansial Fleksibel Karyawan",
     slug: "mengenal-earned-wage-access-ewa-solusi-finansial-fleksibel",
     category: "Finansial",
-    author: "Tim Redaksi Ayo Kasbon",
+    author: { name: "Tim Redaksi Ayo Kasbon", role: "Redaksi" },
     date: "24 Sep 2026",
     status: "published",
     image: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=800&q=80",
@@ -37,56 +60,12 @@ const SEED_ARTICLES = [
     title: "5 Manfaat Memberikan Benefit Finansial Terhadap Produktivitas Tim",
     slug: "5-manfaat-memberikan-benefit-finansial-terhadap-produktivitas-tim",
     category: "HR & Bisnis",
-    author: "Dian Permata",
+    author: { name: "Dian Permata", role: "HR Consultant" },
     date: "20 Sep 2026",
     status: "published",
     image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80",
     excerpt: "Riset membuktikan stres finansial memangkas hingga 30% produktivitas harian tim di kantor. Ini jalan keluarnya.",
     content: "<p>Kesejahteraan finansial (financial wellness) kini bukan lagi sekadar bonus tambahan.</p>"
-  },
-  {
-    title: "Mengapa Kasbon Konvensional Membebani Divisi Finance Perusahaan?",
-    slug: "mengapa-kasbon-konvensional-membebani-divisi-finance",
-    category: "Operasional",
-    author: "Budi Santoso",
-    date: "15 Sep 2026",
-    status: "published",
-    image: "https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&w=800&q=80",
-    excerpt: "Proses pencatatan manual, approval berbelit-belit, dan risiko human error saat rekonsiliasi gaji.",
-    content: "<p>Bagi tim payroll dan finance, akhir bulan sering kali menjadi momen yang sangat melelahkan.</p>"
-  },
-  {
-    title: "Kiat Cerdas Mengatur Anggaran Gaji Bulanan Agar Tidak Terjebak Utang",
-    slug: "kiat-cerdas-mengatur-anggaran-gaji-bulanan",
-    category: "Tips Finansial",
-    author: "Ratna Sari",
-    date: "10 Sep 2026",
-    status: "published",
-    image: "https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?auto=format&fit=crop&w=800&q=80",
-    excerpt: "Metode alokasi 50/30/20 yang telah terbukti ampuh menciptakan stabilitas dana darurat mandiri.",
-    content: "<p>Banyak pekerja yang merasa gaji mereka hanya sekadar 'numpang lewat' di rekening.</p>"
-  },
-  {
-    title: "Ayo Kasbon vs Pinjaman Online: Perbedaan Mendasar yang Wajib Dipahami",
-    slug: "ayo-kasbon-vs-pinjaman-online-perbedaan-mendasar",
-    category: "Edukasi",
-    author: "Tim Redaksi Ayo Kasbon",
-    date: "05 Sep 2026",
-    status: "published",
-    image: "https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=800&q=80",
-    excerpt: "Kasbon adalah hak atas gaji yang telah Anda kerjakan, bukan pinjaman berbunga tinggi.",
-    content: "<p>Di tengah maraknya jeratan aplikasi pinjaman online ilegal yang menerapkan bunga mencekik.</p>"
-  },
-  {
-    title: "Transformasi Digital HR: Integrasi Payroll Otomatis di Era Industri 4.0",
-    slug: "transformasi-digital-hr-integrasi-payroll-otomatis",
-    category: "HR & Bisnis",
-    author: "Dian Permata",
-    date: "01 Sep 2026",
-    status: "published",
-    image: "https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=800&q=80",
-    excerpt: "Menghubungkan absensi karyawan dengan penarikan kasbon secara instan tanpa approval manual rumit.",
-    content: "<p>Automasi adalah kunci efisiensi di era sekarang.</p>"
   }
 ];
 
@@ -125,7 +104,7 @@ export default function Dashboard() {
       // Hitung pesan masuk
       try {
         const msgSnap = await getDocs(collection(db, "contact_messages"));
-        const unread = msgSnap.docs.filter((d) => d.data().status !== "replied").length;
+        const unread = msgSnap.docs.filter((d) => d.data()?.status !== "replied").length;
         setUnreadMessagesCount(unread);
       } catch {
         setUnreadMessagesCount(0);
@@ -138,7 +117,7 @@ export default function Dashboard() {
   }
 
   const handleDelete = async (id, title) => {
-    if (!window.confirm(`Yakin ingin menghapus artikel: "${title}"?`)) {
+    if (!window.confirm(`Yakin ingin menghapus artikel: "${getArticleTitle(title)}"?`)) {
       return;
     }
 
@@ -157,7 +136,7 @@ export default function Dashboard() {
   const handleSeedArticles = async () => {
     if (
       !window.confirm(
-        "Apakah Anda ingin memasukkan 6 artikel panduan finansial contoh ke database Firebase?"
+        "Apakah Anda ingin memasukkan artikel panduan finansial contoh ke database Firebase?"
       )
     ) {
       return;
@@ -431,7 +410,7 @@ export default function Dashboard() {
         {importSuccess && (
           <div className="cms-toast toast-success mb-3" style={{ position: "static", transform: "none" }}>
             <Check size={18} />
-            <span>Berhasil mengimpor 6 artikel contoh ke Firestore!</span>
+            <span>Berhasil mengimpor artikel contoh ke Firestore!</span>
           </div>
         )}
 
@@ -439,7 +418,7 @@ export default function Dashboard() {
           <div className="empty-tracker-notice-box" style={{ margin: "20px 0" }}>
             <div className="notice-text">
               <strong>Belum Ada Artikel di Database</strong>
-              <p>Anda dapat mengimpor 6 artikel contoh resmi bawaan Ayo Kasbon ke database Firestore Anda sekarang.</p>
+              <p>Anda dapat mengimpor artikel contoh resmi bawaan Ayo Kasbon ke database Firestore Anda sekarang.</p>
               <button
                 type="button"
                 onClick={handleSeedArticles}
@@ -447,7 +426,7 @@ export default function Dashboard() {
                 className="btn-primary-action mt-2"
               >
                 <DownloadCloud size={16} />
-                <span>{importing ? "Mengimpor..." : "Impor 6 Artikel Contoh Bawaan"}</span>
+                <span>{importing ? "Mengimpor..." : "Impor Artikel Contoh Bawaan"}</span>
               </button>
             </div>
           </div>
@@ -472,14 +451,18 @@ export default function Dashboard() {
                       <td>
                         <div className="d-flex align-center gap-2">
                           <FileText size={16} className="text-blue flex-shrink-0" />
-                          <span className="font-semibold text-main">{art.title}</span>
+                          <span className="font-semibold text-main">{getArticleTitle(art.title)}</span>
                         </div>
                       </td>
                       <td>
-                        <span className="badge-tag-browser">{art.category || "Finansial"}</span>
+                        <span className="badge-tag-browser">
+                          {typeof art.category === "string" ? art.category : "Finansial"}
+                        </span>
                       </td>
                       <td>
-                        <span className="text-secondary text-sm">{art.author || "Tim Redaksi"}</span>
+                        <span className="text-secondary text-sm">
+                          {getAuthorName(art.author)}
+                        </span>
                       </td>
                       <td>
                         <span className={`badge-status-pill ${art.status === "published" ? "replied" : "unread"}`}>
@@ -487,7 +470,9 @@ export default function Dashboard() {
                         </span>
                       </td>
                       <td>
-                        <span className="text-secondary text-xs">{art.date || "Terbaru"}</span>
+                        <span className="text-secondary text-xs">
+                          {getArticleDate(art)}
+                        </span>
                       </td>
                       <td>
                         <div className="d-flex align-center gap-1">
@@ -520,18 +505,20 @@ export default function Dashboard() {
               {recentArticles.map((art) => (
                 <div key={art.id} className="mobile-article-card-item">
                   <div className="mobile-art-header">
-                    <span className="badge-tag-browser">{art.category || "Finansial"}</span>
+                    <span className="badge-tag-browser">
+                      {typeof art.category === "string" ? art.category : "Finansial"}
+                    </span>
                     <span className={`badge-status-pill ${art.status === "published" ? "replied" : "unread"}`}>
                       {art.status === "published" ? "Tayang" : "Draf"}
                     </span>
                   </div>
 
-                  <h4 className="mobile-art-title">{art.title}</h4>
+                  <h4 className="mobile-art-title">{getArticleTitle(art.title)}</h4>
                   
                   <div className="mobile-art-meta">
-                    <span>{art.author || "Tim Redaksi"}</span>
+                    <span>{getAuthorName(art.author)}</span>
                     <span>•</span>
-                    <span>{art.date || "Terbaru"}</span>
+                    <span>{getArticleDate(art)}</span>
                   </div>
 
                   <div className="mobile-art-actions">
