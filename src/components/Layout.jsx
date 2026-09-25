@@ -37,32 +37,32 @@ export default function Layout({ children }) {
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // State untuk kontrol accordion buka/tutup
+  // State untuk kontrol accordion buka/tutup (default semua tertutup saat baru dibuka agar rapi)
   const [openMenus, setOpenMenus] = useState({
-    home: true,
+    home: false,
     about: false,
-    articles: true,
-    tracking: true,
+    articles: false,
+    tracking: false,
   });
 
-  // Otomatis buka accordion sesuai URL saat ini
-  useEffect(() => {
-    if (location.pathname.startsWith("/articles")) {
-      setOpenMenus((prev) => ({ ...prev, articles: true }));
-    } else if (location.pathname.startsWith("/about")) {
-      setOpenMenus((prev) => ({ ...prev, about: true }));
-    } else if (location.pathname.startsWith("/home")) {
-      setOpenMenus((prev) => ({ ...prev, home: true }));
-    } else if (location.pathname.startsWith("/tracking")) {
-      setOpenMenus((prev) => ({ ...prev, tracking: true }));
-    }
-  }, [location.pathname]);
-
+  // Toggle menu: jika membuka satu menu, tutup menu lainnya (accordion mode) agar sidebar tetap ramping & rapi
   const toggleMenu = (menuKey) => {
-    setOpenMenus((prev) => ({
-      ...prev,
-      [menuKey]: !prev[menuKey],
-    }));
+    setOpenMenus((prev) => {
+      const willOpen = !prev[menuKey];
+      if (willOpen) {
+        return {
+          home: false,
+          about: false,
+          articles: false,
+          tracking: false,
+          [menuKey]: true,
+        };
+      }
+      return {
+        ...prev,
+        [menuKey]: false,
+      };
+    });
   };
 
   const handleLogout = async () => {
