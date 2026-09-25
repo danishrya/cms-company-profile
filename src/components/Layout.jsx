@@ -235,6 +235,15 @@ export default function Layout({ children }) {
                   <span className="nav-submenu-bullet" />
                   <span className="nav-submenu-text">3. Track Button (Klik)</span>
                 </Link>
+
+                <Link
+                  to="/tracking/drafts"
+                  className={`nav-submenu-link ${location.pathname === "/tracking/drafts" ? "active" : ""}`}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <span className="nav-submenu-bullet" />
+                  <span className="nav-submenu-text">4. Draft & Riwayat Harian</span>
+                </Link>
               </div>
             )}
           </div>
