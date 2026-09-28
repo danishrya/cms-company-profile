@@ -224,6 +224,8 @@ export default function Layout({ children }) {
     topbarTitle = "Pelacakan Section Scroll";
   } else if (location.pathname === "/tracking/buttons") {
     topbarTitle = "Pelacakan Klik Tombol";
+  } else if (location.pathname === "/tracking/devices") {
+    topbarTitle = "Pelacakan Perangkat Pengunjung (Mobile HP / PC / Tablet)";
   } else if (location.pathname.startsWith("/tracking")) {
     topbarTitle = "Analitik Pengunjung Live";
   } else if (location.pathname === "/") {
@@ -325,12 +327,21 @@ export default function Layout({ children }) {
                 </Link>
 
                 <Link
+                  to="/tracking/devices"
+                  className={`nav-submenu-link ${location.pathname === "/tracking/devices" ? "active" : ""}`}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <span className="nav-submenu-bullet" />
+                  <span className="nav-submenu-text">4. Track Perangkat (Device)</span>
+                </Link>
+
+                <Link
                   to="/tracking/drafts"
                   className={`nav-submenu-link ${location.pathname === "/tracking/drafts" ? "active" : ""}`}
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   <span className="nav-submenu-bullet" />
-                  <span className="nav-submenu-text">4. Draft & Riwayat Harian</span>
+                  <span className="nav-submenu-text">5. Draft & Riwayat Harian</span>
                 </Link>
               </div>
             )}
