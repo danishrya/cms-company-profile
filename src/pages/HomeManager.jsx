@@ -190,7 +190,9 @@ const DEFAULT_HOME_DATA = {
         company: "Rumah Sakit Cikalong Wetan",
         quote: "Aplikasi yang sangat membantu ketika butuh dana darurat sebelum gajian.",
         initial: "A",
-        color: "linear-gradient(135deg, #00C6FF 0%, #0072FF 100%)"
+        color: "linear-gradient(135deg, #00C6FF 0%, #0072FF 100%)",
+        link: "",
+        linkText: ""
       },
       {
         id: 2,
@@ -198,7 +200,9 @@ const DEFAULT_HOME_DATA = {
         company: "Teleanjar Aware Payment",
         quote: "Mudah cara menggunakan aplikasinya dan proses pencairan sangat cepat.",
         initial: "B",
-        color: "linear-gradient(135deg, #FF9A9E 0%, #FECFEF 100%)"
+        color: "linear-gradient(135deg, #FF9A9E 0%, #FECFEF 100%)",
+        link: "",
+        linkText: ""
       },
       {
         id: 3,
@@ -206,7 +210,9 @@ const DEFAULT_HOME_DATA = {
         company: "Inpam Tekno",
         quote: "Aplikasi yang sangat membantu menjaga ketenangan finansial karyawan.",
         initial: "C",
-        color: "linear-gradient(135deg, #F6D365 0%, #FDA085 100%)"
+        color: "linear-gradient(135deg, #F6D365 0%, #FDA085 100%)",
+        link: "",
+        linkText: ""
       }
     ]
   },
@@ -569,6 +575,38 @@ export default function HomeManager() {
         testimonials: { ...prev.testimonials, list: updated },
       };
     });
+  };
+
+  const handleAddTestimonial = () => {
+    setFormData((prev) => ({
+      ...prev,
+      testimonials: {
+        ...prev.testimonials,
+        list: [
+          ...prev.testimonials.list,
+          {
+            id: Date.now(),
+            name: "Nama Pengguna",
+            company: "Nama Perusahaan",
+            quote: "Ulasan kepuasan menggunakan Ayo Kasbon...",
+            initial: "A",
+            color: "linear-gradient(135deg, #00C6FF 0%, #0072FF 100%)",
+            link: "",
+            linkText: ""
+          }
+        ]
+      }
+    }));
+  };
+
+  const handleDeleteTestimonial = (index) => {
+    setFormData((prev) => ({
+      ...prev,
+      testimonials: {
+        ...prev.testimonials,
+        list: prev.testimonials.list.filter((_, idx) => idx !== index)
+      }
+    }));
   };
 
   // --- Handlers Tab CTA ---
@@ -1658,17 +1696,39 @@ export default function HomeManager() {
             </div>
 
             <div className="form-full-col">
-              <label className="form-label-bold mb-3">3. Daftar Kartu Testimoni Karyawan</label>
+              <div className="d-flex justify-content-between align-items-center mb-3">
+                <label className="form-label-bold mb-0">3. Daftar Kartu Testimoni Karyawan ({formData.testimonials.list.length} Kartu)</label>
+                <button
+                  type="button"
+                  onClick={handleAddTestimonial}
+                  className="btn-secondary-action btn-sm"
+                >
+                  <Plus size={14} />
+                  <span>Tambah Testimoni</span>
+                </button>
+              </div>
               <div className="cards-editor-grid">
                 {formData.testimonials.list.map((item, idx) => (
                   <div key={item.id || idx} className="card-editor-item">
                     <div className="card-item-header">
-                      <span className="card-idx-badge">TESTIMONI #{idx + 1}</span>
-                      <div 
-                        className="color-preview-circle"
-                        style={{ background: item.color || "#0072FF" }}
-                        title="Gradient Warna Avatar"
-                      />
+                      <div className="d-flex align-items-center gap-2">
+                        <span className="card-idx-badge">TESTIMONI #{idx + 1}</span>
+                        <div 
+                          className="color-preview-circle"
+                          style={{ background: item.color || "#0072FF" }}
+                          title="Gradient Warna Avatar"
+                        />
+                      </div>
+                      {formData.testimonials.list.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteTestimonial(idx)}
+                          className="btn-delete-card"
+                          title="Hapus Testimoni"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      )}
                     </div>
 
                     <div className="card-item-fields">
@@ -1705,7 +1765,7 @@ export default function HomeManager() {
                         />
                       </div>
 
-                      <div className="d-flex gap-2">
+                      <div className="d-flex gap-2 mb-2">
                         <div className="flex-1">
                           <label className="mini-label">Inisial Huruf</label>
                           <input
@@ -1727,6 +1787,31 @@ export default function HomeManager() {
                             className="form-input form-input-sm"
                           />
                         </div>
+                      </div>
+
+                      <div className="mb-2">
+                        <label className="mini-label d-flex align-items-center gap-1">
+                          <Link2 size={12} />
+                          <span>Link / URL Bukti Testimoni (Opsional)</span>
+                        </label>
+                        <input
+                          type="url"
+                          value={item.link || item.url || ""}
+                          onChange={(e) => handleTestimonialItemChange(idx, "link", e.target.value)}
+                          placeholder="https://... (Video / Instagram / Berita)"
+                          className="form-input form-input-sm"
+                        />
+                      </div>
+
+                      <div className="mb-2">
+                        <label className="mini-label">Label Tombol Link (Opsional)</label>
+                        <input
+                          type="text"
+                          value={item.linkText || ""}
+                          onChange={(e) => handleTestimonialItemChange(idx, "linkText", e.target.value)}
+                          placeholder="Contoh: Lihat Bukti / Tonton Video (Default: Lihat Testimoni)"
+                          className="form-input form-input-sm"
+                        />
                       </div>
                     </div>
                   </div>
