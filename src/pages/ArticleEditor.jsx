@@ -62,6 +62,7 @@ export default function ArticleEditor() {
     quote: "",
     sourceName: "",
     sourceUrl: "",
+    directExternal: true,
   });
 
   // Load article if editing
@@ -92,6 +93,7 @@ export default function ArticleEditor() {
             quote: d.content?.quote || d.quote || "",
             sourceName: d.sourceName || d.source?.name || "",
             sourceUrl: d.sourceUrl || d.source?.url || "",
+            directExternal: d.directExternal !== false,
           });
         } else {
           alert("Artikel tidak ditemukan!");
@@ -299,6 +301,7 @@ export default function ArticleEditor() {
           name: (formData.sourceName || "").trim(),
           url: (formData.sourceUrl || "").trim(),
         },
+        directExternal: formData.directExternal !== false,
         updatedAt: serverTimestamp(),
       };
 
@@ -456,6 +459,25 @@ export default function ArticleEditor() {
                   />
                 </div>
               </div>
+
+              {formData.sourceUrl && (
+                <div style={{ marginTop: "12px", paddingTop: "10px", borderTop: "1px dashed #cbd5e1" }}>
+                  <label style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer", fontSize: "13px", color: "#1e293b" }}>
+                    <input
+                      type="checkbox"
+                      checked={formData.directExternal !== false}
+                      onChange={(e) => setFormData({ ...formData, directExternal: e.target.checked })}
+                      style={{ width: "16px", height: "16px", accentColor: "#2399ff", cursor: "pointer" }}
+                    />
+                    <span style={{ fontWeight: 600 }}>
+                      Buka langsung tautan berita luar ini saat pengunjung mengklik kartu artikel / "Baca Selengkapnya" (Direct Backlink)
+                    </span>
+                  </label>
+                  <p className="form-hint" style={{ marginTop: "4px", marginLeft: "24px", fontSize: "11px", color: "#64748b" }}>
+                    Jika dicentang, pengunjung di website utama yang mengklik artikel ini akan otomatis diarahkan ke portal media asli di tab baru.
+                  </p>
+                </div>
+              )}
             </div>
 
             <div className="form-group">
